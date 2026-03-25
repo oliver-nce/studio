@@ -1,5 +1,3 @@
-NCE Studio/studio/studio/overrides/sample_override.py
-```
 # -*- coding: utf-8 -*-
 """
 studio.overrides.sample_override
