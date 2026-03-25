@@ -90,7 +90,7 @@
 					:disabled="!canInsertBinding"
 					title="Insert as [[ expression ]]"
 				>
-					{{ '{{ }}' }}
+					<span v-text="'{{ }}'" />
 				</Button>
 			</div>
 			<p v-if="!canInsertBinding" class="mt-1 text-[10px] text-gray-400">
