@@ -101,6 +101,10 @@ def resolve_fields(doctype: str, docname: str, field_paths) -> dict:
                 if not linked_docname:
                     # Broken link — cannot continue the chain
                     return None
+                # Check read permission on the linked document
+                frappe.has_permission(
+                    linked_doctype, "read", linked_docname, throw=True
+                )
                 current_dt = linked_doctype
                 current_dn = linked_docname
             else:
@@ -115,10 +119,18 @@ def resolve_fields(doctype: str, docname: str, field_paths) -> dict:
             result[path] = resolve_path(path)
         except frappe.PermissionError:
             result[path] = None
+        except frappe.DoesNotExistError:
+            result[path] = None
+        except (ValueError, KeyError, TypeError) as exc:
+            frappe.log_error(
+                title=f"NCE resolve_fields: data error for path '{path}'",
+                message=f"doctype={doctype} docname={docname}: {exc}",
+            )
+            result[path] = None
         except Exception as exc:
             frappe.log_error(
-                title=f"NCE resolve_fields error for path '{path}'",
-                message=str(exc),
+                title=f"NCE resolve_fields: unexpected error for path '{path}'",
+                message=f"doctype={doctype} docname={docname}: {type(exc).__name__}: {exc}",
             )
             result[path] = None
 
@@ -165,15 +177,25 @@ def save_resolved_fields(
     # Validate edit lock if a token was supplied
     if lock_token:
         lock_info = check_edit_lock(doctype, docname)
-        if (
-            lock_info.get("locked")
-            and lock_info.get("locked_by") != frappe.session.user
-        ):
+        if lock_info.get("locked"):
+            if lock_info.get("locked_by") != frappe.session.user:
+                return {
+                    "status": "conflict",
+                    "message": _("This record is currently locked by {0}.").format(
+                        lock_info.get("locked_by")
+                    ),
+                }
+            # Verify the supplied token matches the lock holder
+            if lock_token != lock_info.get("locked_by"):
+                return {
+                    "status": "conflict",
+                    "message": _("Lock token does not match. The lock may have been re-acquired."),
+                }
+        else:
+            # lock_token was supplied but no lock exists — warn caller
             return {
                 "status": "conflict",
-                "message": _("This record is currently locked by {0}.").format(
-                    lock_info.get("locked_by")
-                ),
+                "message": _("Edit lock has expired. Please re-acquire the lock before saving."),
             }
 
     doc_cache: dict[tuple[str, str], frappe.model.document.Document] = {}
@@ -260,6 +282,8 @@ def check_edit_lock(doctype: str, docname: str) -> dict:
               or ``{ "locked": true, "locked_by": ..., "locked_at": ...,
                      "expires_at": ... }``
     """
+    frappe.has_permission(doctype, "read", docname, throw=True)
+
     filters = {"target_doctype": doctype, "target_docname": docname}
     lock_name = frappe.db.get_value("NCE Edit Lock", filters, "name")
 
@@ -272,8 +296,13 @@ def check_edit_lock(doctype: str, docname: str) -> dict:
         # Stale lock — clean it up opportunistically
         try:
             frappe.delete_doc("NCE Edit Lock", lock_name, ignore_permissions=True)
-        except Exception:
-            pass
+        except frappe.DoesNotExistError:
+            pass  # Already deleted by another request
+        except Exception as exc:
+            frappe.log_error(
+                title="NCE check_edit_lock: failed to clean up expired lock",
+                message=f"lock={lock_name}: {type(exc).__name__}: {exc}",
+            )
         return {"locked": False}
 
     return {
@@ -323,7 +352,15 @@ def acquire_edit_lock(doctype: str, docname: str, duration_minutes: int = 15) ->
     expires = add_to_date(now, minutes=int(duration_minutes))
     filters = {"target_doctype": doctype, "target_docname": docname}
 
-    lock_name = frappe.db.get_value("NCE Edit Lock", filters, "name")
+    # Use SELECT FOR UPDATE to prevent race conditions between concurrent
+    # lock acquisition requests on the same document.
+    lock_name = frappe.db.sql(
+        """SELECT name FROM `tabNCE Edit Lock`
+        WHERE target_doctype = %s AND target_docname = %s
+        FOR UPDATE""",
+        (doctype, docname),
+    )
+    lock_name = lock_name[0][0] if lock_name else None
 
     if lock_name:
         lock = frappe.get_doc("NCE Edit Lock", lock_name)
@@ -373,6 +410,8 @@ def release_edit_lock(doctype: str, docname: str) -> dict:
     Returns:
         dict: ``{ "released": true }`` or ``{ "released": false, "reason": ... }``
     """
+    frappe.has_permission(doctype, "read", docname, throw=True)
+
     filters = {"target_doctype": doctype, "target_docname": docname}
     lock_name = frappe.db.get_value("NCE Edit Lock", filters, "name")
 
@@ -414,6 +453,8 @@ def refresh_edit_lock(doctype: str, docname: str, duration_minutes: int = 15) ->
     Returns:
         dict: Updated lock state, same shape as ``acquire_edit_lock``.
     """
+    frappe.has_permission(doctype, "write", docname, throw=True)
+
     filters = {"target_doctype": doctype, "target_docname": docname}
     lock_name = frappe.db.get_value("NCE Edit Lock", filters, "name")
 
@@ -499,7 +540,13 @@ def get_theme_settings() -> dict:
     try:
         doc = frappe.get_single("NCE Theme Settings")
         return doc.get_theme_variables()
-    except Exception:
+    except frappe.DoesNotExistError:
+        return {}  # Theme settings not yet configured — use frontend defaults
+    except Exception as exc:
+        frappe.log_error(
+            title="NCE get_theme_settings: failed to load theme",
+            message=f"{type(exc).__name__}: {exc}",
+        )
         return {}
 
 

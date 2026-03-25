@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from "vue"
+import { computed, ref, onMounted, onUnmounted, watch } from "vue"
 import { call } from "frappe-ui"
 import { useNceFormStore } from "@nce/stores"
 
@@ -58,7 +58,17 @@ const resolvedText = computed(() => {
 	return props.text
 })
 
+// Debounce timer to avoid rapid API calls when props change quickly
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+let isMounted = true
+
+function debouncedResolveFieldLabel() {
+	if (debounceTimer) clearTimeout(debounceTimer)
+	debounceTimer = setTimeout(resolveFieldLabel, 150)
+}
+
 async function resolveFieldLabel() {
+	if (!isMounted) return
 	if (!props.fieldPath || !nceFormStore.targetDoctype) return
 
 	const segments = props.fieldPath.split(".")
@@ -68,6 +78,7 @@ async function resolveFieldLabel() {
 		const result = await call("studio.api.get_doctype_fields", {
 			doctype: nceFormStore.targetDoctype,
 		})
+		if (!isMounted) return // Component unmounted during request
 		const field = (result || []).find((f: any) => f.fieldname === fieldName)
 		if (field?.label) {
 			fieldLabel.value = field.label
@@ -78,6 +89,10 @@ async function resolveFieldLabel() {
 }
 
 onMounted(resolveFieldLabel)
-watch(() => props.fieldPath, resolveFieldLabel)
-watch(() => nceFormStore.targetDoctype, resolveFieldLabel)
+onUnmounted(() => {
+	isMounted = false
+	if (debounceTimer) clearTimeout(debounceTimer)
+})
+watch(() => props.fieldPath, debouncedResolveFieldLabel)
+watch(() => nceFormStore.targetDoctype, debouncedResolveFieldLabel)
 </script>

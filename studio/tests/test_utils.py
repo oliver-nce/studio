@@ -21,21 +21,10 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 # ---------------------------------------------------------------------------
-#  Helpers — version detection
+#  Helpers — version detection (delegated to studio.utils for consistency)
 # ---------------------------------------------------------------------------
 
-
-def get_frappe_major_version():
-    """Return the major version of the installed Frappe framework as an int.
-
-    Centralised here so tests can branch on version when absolutely necessary.
-    """
-    return int(frappe.__version__.split(".")[0])
-
-
-def is_v16_or_later():
-    """True when running on Frappe v16+."""
-    return get_frappe_major_version() >= 16
+from studio.utils import get_frappe_major_version, is_v16_or_later  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

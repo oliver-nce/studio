@@ -70,11 +70,21 @@ const nceFormStore = useNceFormStore()
 const isDirty = computed(() => nceFormStore.isDirty)
 
 async function handleSave() {
+	// Check if lock has expired before attempting save
+	if (nceFormStore.editLock.locked && nceFormStore.editLock.expires_at) {
+		const expiresAt = new Date(nceFormStore.editLock.expires_at)
+		if (expiresAt < new Date()) {
+			toast.error("Your edit lock has expired. Please re-acquire the lock before saving.", { duration: 5000 })
+			return
+		}
+	}
+
 	const success = await nceFormStore.save()
 	if (success) {
 		toast.success("Form saved successfully")
 	} else {
-		toast.error("Save failed — check validation errors")
+		const saveError = nceFormStore.validationErrors["_save"]
+		toast.error(saveError || "Save failed — check validation errors")
 	}
 }
 

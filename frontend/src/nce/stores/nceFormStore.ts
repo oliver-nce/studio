@@ -191,7 +191,7 @@ export const useNceFormStore = defineStore("nceForm", () => {
 
   /**
    * Run validation rules against current field values.
-   * Currently implements required-field validation.
+   * Supports: required, minLength, maxLength, min, max, email, url, pattern.
    * Returns true if all validations pass.
    */
   function validate(): boolean {
@@ -199,31 +199,74 @@ export const useNceFormStore = defineStore("nceForm", () => {
     const def = formDefinition.value
     if (!def) return true
 
-    // Required-field validation from validation_rules
     if (def.validation_rules && typeof def.validation_rules === "object") {
       const rules = def.validation_rules as Record<string, any>
       for (const [fieldPath, rule] of Object.entries(rules)) {
-        if (rule?.required) {
-          const value = getFieldValue(fieldPath)
-          if (value === null || value === undefined || value === "") {
-            const label = rule.label ?? fieldPath
-            validationErrors.value[fieldPath] = `${label} is required`
+        if (!rule || typeof rule !== "object") continue
+
+        const value = getFieldValue(fieldPath)
+        const label = rule.label ?? fieldPath
+
+        // Skip further checks if value is empty and field is not required
+        const isEmpty = value === null || value === undefined || value === ""
+        if (isEmpty && !rule.required) continue
+
+        // Already has an error from a previous rule — skip
+        if (validationErrors.value[fieldPath]) continue
+
+        // Required
+        if (rule.required && isEmpty) {
+          validationErrors.value[fieldPath] = `${label} is required`
+          continue
+        }
+
+        // String length checks
+        if (rule.minLength && typeof value === "string" && value.length < rule.minLength) {
+          validationErrors.value[fieldPath] =
+            `${label} must be at least ${rule.minLength} characters`
+        }
+        if (rule.maxLength && typeof value === "string" && value.length > rule.maxLength) {
+          validationErrors.value[fieldPath] =
+            `${label} must be at most ${rule.maxLength} characters`
+        }
+
+        // Numeric range checks
+        if (rule.min !== undefined && typeof value === "number" && value < rule.min) {
+          validationErrors.value[fieldPath] =
+            `${label} must be at least ${rule.min}`
+        }
+        if (rule.max !== undefined && typeof value === "number" && value > rule.max) {
+          validationErrors.value[fieldPath] =
+            `${label} must be at most ${rule.max}`
+        }
+
+        // Email format
+        if (rule.email && typeof value === "string" && value) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          if (!emailRegex.test(value)) {
+            validationErrors.value[fieldPath] = `${label} must be a valid email address`
           }
         }
-        if (rule?.minLength) {
-          const value = getFieldValue(fieldPath)
-          if (typeof value === "string" && value.length < rule.minLength) {
-            const label = rule.label ?? fieldPath
-            validationErrors.value[fieldPath] =
-              `${label} must be at least ${rule.minLength} characters`
+
+        // URL format
+        if (rule.url && typeof value === "string" && value) {
+          try {
+            new URL(value)
+          } catch {
+            validationErrors.value[fieldPath] = `${label} must be a valid URL`
           }
         }
-        if (rule?.maxLength) {
-          const value = getFieldValue(fieldPath)
-          if (typeof value === "string" && value.length > rule.maxLength) {
-            const label = rule.label ?? fieldPath
-            validationErrors.value[fieldPath] =
-              `${label} must be at most ${rule.maxLength} characters`
+
+        // Regex pattern
+        if (rule.pattern && typeof value === "string" && value) {
+          try {
+            const regex = new RegExp(rule.pattern)
+            if (!regex.test(value)) {
+              validationErrors.value[fieldPath] =
+                rule.patternMessage ?? `${label} does not match the required format`
+            }
+          } catch {
+            // Invalid regex pattern in config — skip
           }
         }
       }

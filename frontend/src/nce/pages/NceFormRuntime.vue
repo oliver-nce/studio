@@ -68,6 +68,7 @@ import { FeatherIcon } from "frappe-ui"
 import { useRoute, useRouter } from "vue-router"
 import { useNceFormStore } from "@nce/stores"
 import { useFormSchema } from "@nce/utils/useFormSchema"
+import { safeEvaluateCondition } from "@nce/utils/safeEval"
 import { toast } from "vue-sonner"
 import NceFormHeader from "@nce/components/FormElements/NceFormHeader.vue"
 import NceTabContainer from "@nce/components/FormElements/NceTabContainer.vue"
@@ -105,13 +106,7 @@ const formGridConfig = computed(() => {
 const visibleTabs = computed(() => {
 	return (tabs.value || []).filter((tab) => {
 		if (!tab.condition) return true
-		try {
-			const formData = nceFormStore.getFormData()
-			const fn = new Function("data", `return !!(${tab.condition})`)
-			return fn(formData)
-		} catch {
-			return true
-		}
+		return safeEvaluateCondition(tab.condition, nceFormStore.getFormData())
 	})
 })
 
@@ -134,7 +129,7 @@ onMounted(async () => {
 		}
 	}
 
-	// Start lock auto-refresh (every 5 minutes)
+	// Start lock auto-refresh AFTER loading completes (avoids race condition)
 	lockTimer.value = setInterval(async () => {
 		if (nceFormStore.editLock.locked) {
 			try {
@@ -146,14 +141,18 @@ onMounted(async () => {
 	}, 5 * 60 * 1000)
 })
 
-// Lifecycle: unmount
+// Lifecycle: unmount — release lock, stop timer, and clear form state
 onUnmounted(() => {
-	// Release lock and stop timer
 	if (lockTimer.value) {
 		clearInterval(lockTimer.value)
 		lockTimer.value = null
 	}
 	nceFormStore.releaseLock()
+	// Clear form state to prevent stale data on re-navigation
+	nceFormStore.currentDocname = null
+	nceFormStore.resolvedData = {}
+	nceFormStore.dirtyFields = {}
+	nceFormStore.validationErrors = {}
 })
 
 // Watch route changes (in case user navigates within same page)

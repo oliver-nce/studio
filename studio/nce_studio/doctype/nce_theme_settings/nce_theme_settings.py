@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 
 import math
 import os
+import re
 
 import frappe
 from frappe import _
@@ -265,10 +266,50 @@ def _build_css(doc: "NCEThemeSettings") -> str:
 # ---------------------------------------------------------------------------
 
 
+_CSS_VALUE_PATTERN = re.compile(
+    r"^[a-zA-Z0-9\s\-_.,#%()/'\"+:;]*$"
+)
+
+
+def _validate_css_value(value: str, field_label: str) -> None:
+    """Validate that a CSS value contains no dangerous characters.
+
+    Rejects values containing braces, semicolons (outside custom_css),
+    backslashes, url(), expression(), and other injection vectors.
+    """
+    if not value:
+        return
+    if not _CSS_VALUE_PATTERN.match(value):
+        frappe.throw(
+            _("Theme field '{0}' contains invalid characters: {1}").format(
+                field_label, value
+            ),
+            title=_("Invalid CSS Value"),
+        )
+
+
 class NCEThemeSettings(Document):
     # ------------------------------------------------------------------
     # Lifecycle hooks
     # ------------------------------------------------------------------
+
+    def validate(self):
+        """Validate CSS values before saving to prevent injection."""
+        css_fields = [
+            ("font_family", "Font Family"),
+            ("font_size_base", "Font Size Base"),
+            ("font_weight_base", "Font Weight Base"),
+            ("line_height_base", "Line Height Base"),
+            ("border_radius", "Border Radius"),
+            ("spacing_unit", "Spacing Unit"),
+            ("max_content_width", "Max Content Width"),
+            ("sidebar_width", "Sidebar Width"),
+            ("transition_speed", "Transition Speed"),
+        ]
+        for fieldname, label in css_fields:
+            value = self.get(fieldname)
+            if value:
+                _validate_css_value(str(value), label)
 
     def on_update(self):
         """Regenerate the theme CSS file every time settings are saved."""

@@ -34,76 +34,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { computed } from "vue"
 import { FeatherIcon } from "frappe-ui"
 import PaletteGroup from "./PaletteGroup.vue"
+import { useComponentPaletteStore, type PaletteComponent } from "@nce/stores/componentPalette"
 
-// Component definitions with categories
-interface PaletteComponent {
-	name: string
-	label: string
-	category: string
-	description?: string
-	icon?: any
-}
+const paletteStore = useComponentPaletteStore()
 
-const allComponents: PaletteComponent[] = [
-	// Forms
-	{ name: "NceFormHeader", label: "Form Header", category: "forms", description: "Form title and header section", icon: "FileText" },
-	{ name: "NceFormActionBar", label: "Action Bar", category: "forms", description: "Save, Cancel, and Submit buttons", icon: "Activity" },
-	// Layout
-	{ name: "NceFormGrid", label: "Form Grid", category: "layout", description: "Grid layout container", icon: "Grid" },
-	{ name: "NceTabContainer", label: "Tab Container", category: "layout", description: "Tabbed interface for organizing fields", icon: "Tabs" },
-	// Data
-	{ name: "NceFormField", label: "Form Field", category: "data", description: "Input field for form data", icon: "Edit" },
-	// Feedback
-	{ name: "NceCaption", label: "Caption", category: "feedback", description: "Instructional or descriptive text", icon: "AlertCircle" },
-	{ name: "NceActionButton", label: "Action Button", category: "feedback", description: "Custom action button", icon: "Play" },
-]
+// Delegate search state to the store
+const searchQuery = computed({
+	get: () => paletteStore.searchQuery,
+	set: (val: string) => { paletteStore.searchQuery = val },
+})
 
-// Grouped components
-const groupedComponents = computed(() => {
+const filteredGroups = computed(() => {
+	const source = searchQuery.value
+		? paletteStore.filteredComponents
+		: paletteStore.components
+
+	// Group components by category
 	const groups: Record<string, PaletteComponent[]> = {}
-	for (const component of allComponents) {
+	for (const component of source) {
 		if (!groups[component.category]) {
 			groups[component.category] = []
 		}
 		groups[component.category].push(component)
 	}
-	return groups
-})
 
-// Search functionality
-const searchQuery = ref("")
-
-const filteredGroups = computed(() => {
-	if (!searchQuery.value) {
-		return Object.entries(groupedComponents.value).map(([name, components]) => ({
-			name,
-			components,
-		}))
-	}
-
-	const query = searchQuery.value.toLowerCase()
-	const filteredGroups: typeof filteredGroups.value = []
-
-	for (const [groupName, components] of Object.entries(groupedComponents.value)) {
-		const filteredComponents = components.filter(
-			(component) =>
-				component.name.toLowerCase().includes(query) ||
-				component.label.toLowerCase().includes(query) ||
-				(component.description && component.description.toLowerCase().includes(query))
-		)
-
-		if (filteredComponents.length > 0) {
-			filteredGroups.push({
-				name: groupName,
-				components: filteredComponents,
-			})
-		}
-	}
-
-	return filteredGroups
+	return Object.entries(groups).map(([name, components]) => ({
+		name,
+		components,
+	}))
 })
 
 const emit = defineEmits<{

@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useNceFormStore } from "@nce/stores"
+import { safeEvaluateCondition } from "@nce/utils/safeEval"
 import type { TabDefinition } from "@nce/types"
 
 const props = withDefaults(
@@ -46,13 +47,7 @@ const activeIndex = ref(0)
 const visibleTabs = computed(() => {
 	return (props.tabs || []).filter((tab) => {
 		if (!tab.condition) return true
-		try {
-			const formData = nceFormStore.getFormData()
-			const fn = new Function("data", `return !!(${tab.condition})`)
-			return fn(formData)
-		} catch {
-			return true
-		}
+		return safeEvaluateCondition(tab.condition, nceFormStore.getFormData())
 	})
 })
 

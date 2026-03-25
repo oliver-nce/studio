@@ -2,6 +2,7 @@
 // Pure utility functions for parsing and transforming form definitions
 
 import type { FormDefinition, TabDefinition, FieldMeta } from "@nce/types";
+import { safeEvaluateCondition } from "./safeEval";
 
 // ---------------------------------------------------------------------------
 // mapFieldsToTabs
@@ -26,13 +27,7 @@ export function mapFieldsToTabs(
 	for (const tab of tabLayout) {
 		// If tab has a condition, skip it if condition evaluates to false
 		if (tab.condition && schema.form_schema) {
-			try {
-				const fn = new Function("data", `return !!(${tab.condition})`);
-				if (!fn(schema.form_schema)) {
-					continue;
-				}
-			} catch {
-				// If condition evaluation fails, skip the tab (fail-safe)
+			if (!safeEvaluateCondition(tab.condition, schema.form_schema)) {
 				continue;
 			}
 		}
@@ -92,15 +87,7 @@ export function evaluateCondition(
 	condition: string,
 	formData: Record<string, any>,
 ): boolean {
-	if (!condition) return true;
-
-	try {
-		const fn = new Function("data", `return !!(${condition})`);
-		return fn(formData) === true;
-	} catch {
-		// Fail-safe: show the element if condition cannot be evaluated
-		return true;
-	}
+	return safeEvaluateCondition(condition, formData);
 }
 
 // ---------------------------------------------------------------------------

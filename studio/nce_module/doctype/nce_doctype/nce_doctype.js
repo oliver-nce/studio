@@ -20,22 +20,23 @@ frappe.ui.form.on("NCE Doctype", {
 	// ─── Form Refresh (runs on every load / reload) ───
 	refresh(frm) {
 		// Add custom buttons for saved documents
-		if (!frm.is_new()) {
-			frm.add_custom_button(__("Do Something"), function () {
-				frappe.call({
-					method: "studio.api.nce_api.my_whitelisted_method",
-					args: {
-						name: frm.doc.name,
-					},
-					callback(r) {
-						if (r.message) {
-							frappe.msgprint(r.message);
-							frm.reload_doc();
-						}
-					},
-				});
-			});
-		}
+		// NOTE: Uncomment and update the method path when a real endpoint exists.
+		// if (!frm.is_new()) {
+		// 	frm.add_custom_button(__("Do Something"), function () {
+		// 		frappe.call({
+		// 			method: "studio.api.nce_api.your_method_here",
+		// 			args: {
+		// 				name: frm.doc.name,
+		// 			},
+		// 			callback(r) {
+		// 				if (r.message) {
+		// 					frappe.msgprint(r.message);
+		// 					frm.reload_doc();
+		// 				}
+		// 			},
+		// 		});
+		// 	});
+		// }
 	},
 
 	// ─── Validate (runs before save, client-side) ───

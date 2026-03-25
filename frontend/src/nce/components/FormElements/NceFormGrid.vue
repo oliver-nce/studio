@@ -8,6 +8,7 @@
 			:key="field"
 			:fieldPath="field"
 			:editable="true"
+			:style="getFieldStyle(field)"
 		/>
 	</div>
 </template>
@@ -15,8 +16,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import NceFormField from "./NceFormField.vue"
-import { useNceFormStore } from "@nce/stores"
-import type { FieldMeta } from "@nce/types"
 
 const props = withDefaults(
 	defineProps<{
@@ -27,8 +26,6 @@ const props = withDefaults(
 		gridConfig: () => ({}),
 	}
 )
-
-const nceFormStore = useNceFormStore()
 
 // Default 2-column grid
 const GRID_COLS = "repeat(2, minmax(0, 1fr))"
