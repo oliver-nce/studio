@@ -378,6 +378,7 @@ onUnmounted(() => {
   border-radius: 6px;
   cursor: pointer;
   transition: transform 0.1s;
+}
 
 .shade-swatch:hover {
   transform: scale(1.1);
