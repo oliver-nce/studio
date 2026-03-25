@@ -81,15 +81,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue"
 import { FeatherIcon } from "frappe-ui"
-import { call } from "frappe-ui"
-
-interface FieldInfo {
-	fieldname: string
-	fieldtype: string
-	label: string
-	options?: string
-	reqd?: boolean
-}
+import { useFieldMeta, type FieldInfo } from "@nce/composables/useFieldMeta"
 
 const props = withDefaults(
 	defineProps<{
@@ -111,6 +103,8 @@ const emit = defineEmits<{
 	(e: "select", field: FieldInfo): void
 	(e: "toggle", field: FieldInfo): void
 }>()
+
+const { fetchDoctypeFields } = useFieldMeta()
 
 const fields = ref<FieldInfo[]>([])
 const isLoading = ref(false)
@@ -170,17 +164,15 @@ function sortFields(raw: FieldInfo[]): FieldInfo[] {
 	})
 }
 
-// Fetch fields from Frappe
+// Fetch fields via the shared cached composable
 async function fetchFields() {
 	if (!props.doctype) return
 
 	isLoading.value = true
 	errorMessage.value = ""
 	try {
-		const result = await call("studio.api.get_doctype_fields", {
-			doctype: props.doctype,
-		})
-		fields.value = result || []
+		const result = await fetchDoctypeFields(props.doctype)
+		fields.value = result
 		displayFields.value = sortFields(fields.value)
 	} catch (err: any) {
 		errorMessage.value = err?.message || "Failed to load fields"

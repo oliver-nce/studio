@@ -19,6 +19,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, now_datetime
 
+from studio.utils import is_system_manager
+
 
 # ---------------------------------------------------------------------------
 # check_edit_lock
@@ -175,9 +177,9 @@ def release_edit_lock(doctype: str, docname: str) -> dict:
         return {"released": True}  # Nothing to release
 
     lock = frappe.get_doc("NCE Edit Lock", lock_name)
-    is_system_manager = "System Manager" in frappe.get_roles(frappe.session.user)
+    _is_sm = is_system_manager()
 
-    if not is_system_manager and lock.locked_by != frappe.session.user:
+    if not _is_sm and lock.locked_by != frappe.session.user:
         return {
             "released": False,
             "reason": _("Lock is held by {0}.").format(lock.locked_by),
@@ -219,9 +221,9 @@ def refresh_edit_lock(doctype: str, docname: str, duration_minutes: int = 15) ->
         return acquire_edit_lock(doctype, docname, duration_minutes)
 
     lock = frappe.get_doc("NCE Edit Lock", lock_name)
-    is_system_manager = "System Manager" in frappe.get_roles(frappe.session.user)
+    _is_sm = is_system_manager()
 
-    if not is_system_manager and lock.locked_by != frappe.session.user:
+    if not _is_sm and lock.locked_by != frappe.session.user:
         return {
             "status": "conflict",
             "locked_by": lock.locked_by,

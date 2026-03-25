@@ -24,20 +24,29 @@ export function mapFieldsToTabs(
 
 	const result: Record<string, string[]> = {};
 
-	for (const tab of tabLayout) {
-		// If tab has a condition, skip it if condition evaluates to false
-		if (tab.condition && schema.form_schema) {
-			if (!safeEvaluateCondition(tab.condition, schema.form_schema)) {
-				continue;
-			}
-		}
-
-		// Use tab label as key
+	const visible = filterVisibleTabs(tabLayout, schema.form_schema || {});
+	for (const tab of visible) {
 		const key = tab.label || "Unnamed Tab";
 		result[key] = tab.fields ?? [];
 	}
 
 	return result;
+}
+
+// ---------------------------------------------------------------------------
+// filterVisibleTabs
+// Filters a tab array to only those whose conditions pass against the form data.
+// Single source of truth — used by NceTabContainer, NceFormRuntime, and mapFieldsToTabs.
+// ---------------------------------------------------------------------------
+
+export function filterVisibleTabs(
+	tabs: TabDefinition[],
+	formData: Record<string, any>,
+): TabDefinition[] {
+	return (tabs || []).filter((tab) => {
+		if (!tab.condition) return true;
+		return safeEvaluateCondition(tab.condition, formData);
+	});
 }
 
 // ---------------------------------------------------------------------------

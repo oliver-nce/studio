@@ -13,6 +13,7 @@ import {
   releaseEditLock,
   getFormDefinition,
 } from "@nce/utils/dataPipeline"
+import { getFormFields } from "@nce/utils/schemaHelpers"
 
 export const useNceFormStore = defineStore("nceForm", () => {
   // ---------------------------------------------------------------------------
@@ -40,27 +41,13 @@ export const useNceFormStore = defineStore("nceForm", () => {
   // ---------------------------------------------------------------------------
 
   /**
-   * Extract all field paths referenced in the form schema's field_mapping.
-   * Falls back to top-level keys of form_schema if field_mapping is empty.
+   * Extract all field paths referenced in the form definition.
+   * Delegates to the canonical getFormFields() in schemaHelpers.
    */
   function _getFieldPaths(): string[] {
     const def = formDefinition.value
     if (!def) return []
-
-    // field_mapping is the canonical source: { componentId: "dot.path" }
-    if (def.field_mapping && typeof def.field_mapping === "object") {
-      const paths = Object.values(def.field_mapping).filter(
-        (v): v is string => typeof v === "string"
-      )
-      if (paths.length > 0) return paths
-    }
-
-    // Fallback: keys of form_schema treated as field names
-    if (def.form_schema && typeof def.form_schema === "object") {
-      return Object.keys(def.form_schema)
-    }
-
-    return []
+    return getFormFields(def)
   }
 
   // ---------------------------------------------------------------------------

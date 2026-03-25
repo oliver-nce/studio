@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import { useNceFormStore } from "@nce/stores"
-import { safeEvaluateCondition } from "@nce/utils/safeEval"
+import { filterVisibleTabs } from "@nce/utils/schemaHelpers"
 import type { TabDefinition } from "@nce/types"
 
 const props = withDefaults(
@@ -45,10 +45,7 @@ const nceFormStore = useNceFormStore()
 const activeIndex = ref(0)
 
 const visibleTabs = computed(() => {
-	return (props.tabs || []).filter((tab) => {
-		if (!tab.condition) return true
-		return safeEvaluateCondition(tab.condition, nceFormStore.getFormData())
-	})
+	return filterVisibleTabs(props.tabs || [], nceFormStore.getFormData())
 })
 
 defineExpose({ activeIndex, visibleTabs })

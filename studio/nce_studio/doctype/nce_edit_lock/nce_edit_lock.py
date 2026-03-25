@@ -14,6 +14,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_to_date, now_datetime
 
+from studio.utils import is_system_manager
+
 
 class NCEEditLock(Document):
     # ------------------------------------------------------------------
@@ -42,8 +44,7 @@ class NCEEditLock(Document):
         unless the current user is a System Manager."""
         if not self.locked_by:
             return
-        is_system_manager = "System Manager" in frappe.get_roles(frappe.session.user)
-        if not is_system_manager and self.locked_by != frappe.session.user:
+        if not is_system_manager() and self.locked_by != frappe.session.user:
             frappe.throw(
                 _("You cannot modify a lock held by '{0}'.").format(self.locked_by),
                 title=_("Permission Denied"),

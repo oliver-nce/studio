@@ -94,6 +94,7 @@ import {
 } from "frappe-ui"
 import { call } from "frappe-ui"
 import { useNceFormStore } from "@nce/stores"
+import { useFieldMeta } from "@nce/composables/useFieldMeta"
 
 const props = withDefaults(
 	defineProps<{
@@ -115,6 +116,7 @@ const props = withDefaults(
 )
 
 const nceFormStore = useNceFormStore()
+const { resolveNestedFieldMeta } = useFieldMeta()
 
 // Field metadata resolved from the form's target DocType
 const fieldMeta = ref<Record<string, any>>({})
@@ -214,49 +216,16 @@ function debouncedResolveFieldMeta() {
 }
 
 // Resolve field metadata from the target DocType on mount.
-// For nested paths (e.g. "customer.customer_group.name"), traverses through
-// linked doctypes to find metadata for the terminal field.
+// Uses the shared useFieldMeta composable which caches results per DocType,
+// avoiding redundant API calls across components.
 async function resolveFieldMeta() {
 	if (!isMounted) return
 	if (!nceFormStore.targetDoctype || !props.fieldPath) return
 
-	const segments = props.fieldPath.split(".")
-
 	try {
-		if (segments.length === 1) {
-			// Simple path — look up in root doctype
-			const result = await call("studio.api.get_doctype_fields", {
-				doctype: nceFormStore.targetDoctype,
-			})
-			if (!isMounted) return
-			const field = (result || []).find((f: any) => f.fieldname === segments[0])
-			if (field) fieldMeta.value = field
-		} else {
-			// Nested path — traverse link chain to find the correct doctype
-			let currentDoctype = nceFormStore.targetDoctype
-
-			for (let i = 0; i < segments.length; i++) {
-				const result = await call("studio.api.get_doctype_fields", {
-					doctype: currentDoctype,
-				})
-				if (!isMounted) return
-
-				const field = (result || []).find((f: any) => f.fieldname === segments[i])
-
-				if (!field) break
-
-				if (i === segments.length - 1) {
-					// Terminal segment — this is the field we want
-					fieldMeta.value = field
-				} else if (field.fieldtype === "Link" && field.options) {
-					// Intermediate Link field — follow to the linked doctype
-					currentDoctype = field.options
-				} else {
-					// Non-link intermediate — can't traverse further
-					break
-				}
-			}
-		}
+		const meta = await resolveNestedFieldMeta(nceFormStore.targetDoctype, props.fieldPath)
+		if (!isMounted) return
+		if (meta) fieldMeta.value = meta
 	} catch {
 		// Silently fail — will use prop defaults
 	}

@@ -10,8 +10,8 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from "vue"
-import { call } from "frappe-ui"
 import { useNceFormStore } from "@nce/stores"
+import { useFieldMeta } from "@nce/composables/useFieldMeta"
 
 const props = withDefaults(
 	defineProps<{
@@ -27,6 +27,7 @@ const props = withDefaults(
 )
 
 const nceFormStore = useNceFormStore()
+const { resolveNestedFieldMeta } = useFieldMeta()
 const fieldLabel = ref("")
 
 const tagName = computed(() => {
@@ -71,17 +72,11 @@ async function resolveFieldLabel() {
 	if (!isMounted) return
 	if (!props.fieldPath || !nceFormStore.targetDoctype) return
 
-	const segments = props.fieldPath.split(".")
-	const fieldName = segments[segments.length - 1]
-
 	try {
-		const result = await call("studio.api.get_doctype_fields", {
-			doctype: nceFormStore.targetDoctype,
-		})
-		if (!isMounted) return // Component unmounted during request
-		const field = (result || []).find((f: any) => f.fieldname === fieldName)
-		if (field?.label) {
-			fieldLabel.value = field.label
+		const meta = await resolveNestedFieldMeta(nceFormStore.targetDoctype, props.fieldPath)
+		if (!isMounted) return
+		if (meta?.label) {
+			fieldLabel.value = meta.label
 		}
 	} catch {
 		// Silent — fall back to props.text

@@ -148,24 +148,31 @@ def generate_shades(hex_color: str) -> dict[int, str]:
 # CSS generation helpers
 # ---------------------------------------------------------------------------
 
+# Master colour field registry.  Third element marks whether the colour
+# gets a full shade scale ("shade") or is a flat semantic token ("semantic").
+# All sub-lists are derived from this single source of truth.
 _COLOUR_FIELDS = [
-    ("primary_color", "primary"),
-    ("secondary_color", "secondary"),
-    ("accent_color", "accent"),
-    ("success_color", "success"),
-    ("warning_color", "warning"),
-    ("danger_color", "danger"),
-    ("info_color", "info"),
-    ("gray_color", "gray"),
-    ("text_color", "text"),
-    ("text_muted_color", "text-muted"),
-    ("background_color", "background"),
-    ("surface_color", "surface"),
-    ("border_color", "border"),
-    ("link_color", "link"),
-    ("focus_ring_color", "focus-ring"),
-    ("shadow_color", "shadow-color"),
+    ("primary_color", "primary", "shade"),
+    ("secondary_color", "secondary", "shade"),
+    ("accent_color", "accent", "shade"),
+    ("success_color", "success", "shade"),
+    ("warning_color", "warning", "shade"),
+    ("danger_color", "danger", "shade"),
+    ("info_color", "info", "shade"),
+    ("gray_color", "gray", "shade"),
+    ("text_color", "text", "semantic"),
+    ("text_muted_color", "text-muted", "semantic"),
+    ("background_color", "background", "semantic"),
+    ("surface_color", "surface", "semantic"),
+    ("border_color", "border", "semantic"),
+    ("link_color", "link", "semantic"),
+    ("focus_ring_color", "focus-ring", "semantic"),
+    ("shadow_color", "shadow-color", "semantic"),
 ]
+
+# Derived sub-lists — kept in sync automatically
+_SHADE_COLOUR_FIELDS = [(f, v) for f, v, k in _COLOUR_FIELDS if k == "shade"]
+_SEMANTIC_COLOUR_FIELDS = [(f, v) for f, v, k in _COLOUR_FIELDS if k == "semantic"]
 
 _SHADOW_MAP = {
     "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
@@ -187,18 +194,7 @@ def _build_css(doc: "NCEThemeSettings") -> str:
     ]
 
     # --- Colour base variables + shade scales ---
-    shades_to_generate = [
-        ("primary_color", "primary"),
-        ("secondary_color", "secondary"),
-        ("accent_color", "accent"),
-        ("success_color", "success"),
-        ("warning_color", "warning"),
-        ("danger_color", "danger"),
-        ("info_color", "info"),
-        ("gray_color", "gray"),
-    ]
-
-    for field, var_name in shades_to_generate:
+    for field, var_name in _SHADE_COLOUR_FIELDS:
         hex_val = doc.get(field) or "#000000"
         lines.append(f"  /* {var_name} */")
         lines.append(f"  --nce-{var_name}: {hex_val};")
@@ -208,18 +204,8 @@ def _build_css(doc: "NCEThemeSettings") -> str:
         lines.append("")
 
     # --- Semantic colour variables (no shade scale) ---
-    semantic_fields = [
-        ("text_color", "text"),
-        ("text_muted_color", "text-muted"),
-        ("background_color", "background"),
-        ("surface_color", "surface"),
-        ("border_color", "border"),
-        ("link_color", "link"),
-        ("focus_ring_color", "focus-ring"),
-        ("shadow_color", "shadow-color"),
-    ]
     lines.append("  /* Semantic colours */")
-    for field, var_name in semantic_fields:
+    for field, var_name in _SEMANTIC_COLOUR_FIELDS:
         hex_val = doc.get(field) or "#000000"
         lines.append(f"  --nce-{var_name}: {hex_val};")
     lines.append("")

@@ -68,7 +68,7 @@ import { FeatherIcon } from "frappe-ui"
 import { useRoute, useRouter } from "vue-router"
 import { useNceFormStore } from "@nce/stores"
 import { useFormSchema } from "@nce/composables/useFormSchema"
-import { safeEvaluateCondition } from "@nce/utils/safeEval"
+import { filterVisibleTabs, getFormFields } from "@nce/utils/schemaHelpers"
 import { toast } from "vue-sonner"
 import NceFormHeader from "@nce/components/FormElements/NceFormHeader.vue"
 import NceTabContainer from "@nce/components/FormElements/NceTabContainer.vue"
@@ -87,13 +87,11 @@ const formName = computed(() => route.params.formName as string)
 // Record name from route (optional)
 const docname = computed(() => route.params.docname as string | undefined)
 
-// All field paths from form definition
+// All field paths from form definition (delegates to schemaHelpers)
 const allFieldPaths = computed(() => {
 	const def = nceFormStore.formDefinition
 	if (!def) return []
-	return Object.values(def.field_mapping || {}).filter(
-		(v): v is string => typeof v === "string"
-	)
+	return getFormFields(def)
 })
 
 // Grid config from form definition
@@ -104,10 +102,7 @@ const formGridConfig = computed(() => {
 
 // Filter visible tabs based on conditions
 const visibleTabs = computed(() => {
-	return (tabs.value || []).filter((tab) => {
-		if (!tab.condition) return true
-		return safeEvaluateCondition(tab.condition, nceFormStore.getFormData())
-	})
+	return filterVisibleTabs(tabs.value || [], nceFormStore.getFormData())
 })
 
 // Lock refresh timer

@@ -67,6 +67,25 @@ def is_v15():
 
 
 # ---------------------------------------------------------------------------
+#  Role helpers
+# ---------------------------------------------------------------------------
+
+
+def is_system_manager(user=None):
+    """``True`` when *user* (default: current session user) holds the
+    System Manager role.
+
+    Args:
+        user (str | None): Frappe user ID.  Defaults to ``frappe.session.user``.
+
+    Returns:
+        bool
+    """
+    user = user or frappe.session.user
+    return "System Manager" in frappe.get_roles(user)
+
+
+# ---------------------------------------------------------------------------
 #  Safe optional-module imports (lean-core guard)
 #
 #  Some modules that were built-in to v15 may be extracted to separate apps

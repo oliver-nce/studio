@@ -14,6 +14,7 @@ import { Button } from "frappe-ui"
 import { call } from "frappe-ui"
 import { toast } from "vue-sonner"
 import { useNceFormStore } from "@nce/stores"
+import { useSaveAction } from "@nce/composables/useSaveAction"
 
 const props = withDefaults(
 	defineProps<{
@@ -35,6 +36,7 @@ const props = withDefaults(
 )
 
 const nceFormStore = useNceFormStore()
+const { handleSave, handleSubmit } = useSaveAction()
 const isProcessing = ref(false)
 
 async function handleClick() {
@@ -68,44 +70,6 @@ async function handleClick() {
 		toast.error(err?.message || "Action failed")
 	} finally {
 		isProcessing.value = false
-	}
-}
-
-async function handleSave() {
-	// Check if lock has expired before attempting save
-	if (nceFormStore.editLock.locked && nceFormStore.editLock.expires_at) {
-		const expiresAt = new Date(nceFormStore.editLock.expires_at)
-		if (expiresAt < new Date()) {
-			toast.error("Your edit lock has expired. Please re-acquire the lock before saving.", { duration: 5000 })
-			return
-		}
-	}
-
-	const success = await nceFormStore.save()
-	if (success) {
-		toast.success("Saved successfully")
-	} else {
-		const saveError = nceFormStore.validationErrors["_save"]
-		toast.error(saveError || "Save failed — check validation errors")
-	}
-}
-
-async function handleSubmit() {
-	const saved = await nceFormStore.save()
-	if (!saved) {
-		toast.error("Save failed — cannot submit")
-		return
-	}
-	if (!nceFormStore.targetDoctype || !nceFormStore.currentDocname) return
-	try {
-		await call("frappe.client.submit", {
-			doctype: nceFormStore.targetDoctype,
-			name: nceFormStore.currentDocname,
-		})
-		toast.success("Submitted successfully")
-		await nceFormStore.loadRecord(nceFormStore.currentDocname)
-	} catch (err: any) {
-		toast.error(err?.message || "Submit failed")
 	}
 }
 
