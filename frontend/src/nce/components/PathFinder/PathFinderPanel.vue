@@ -88,7 +88,7 @@
 					size="sm"
 					@click="insertAsExpression"
 					:disabled="!canInsertBinding"
-					title="Insert as &lcub;&lcub; expression &rcub;&rcub;"
+					:title="'Insert as {{ expression }}'"
 				>
 					{{ '{{ }}' }}
 				</Button>
