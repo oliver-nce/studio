@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" href="/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Frappe Studio</title>
+		<script type="module" crossorigin src="/assets/studio/frontend/assets/studio-D3WZv0sI.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/studio/frontend/assets/block-CRiaZdY0.js">
+		<link rel="stylesheet" crossorigin href="/assets/studio/frontend/assets/block-B11d-wID.css">
+	</head>
+	<body>
+		<!-- For the main app builder -->
+		<div id="studio"></div>
+		<div id="modals"></div>
+		<div id="popovers"></div>
+
+		<script>
+			window.csrf_token = '{{ csrf_token }}';
+			window.site_url = '{{ site_url }}';
+			window.is_developer_mode = {{ is_developer_mode }};
+		</script>
+	</body>
+</html>
