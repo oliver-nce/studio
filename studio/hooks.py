@@ -134,6 +134,3 @@ app_logo_url = "/assets/studio/images/logo.png"
 # auth_hooks = [
 #     "studio.auth.validate",
 # ]
-```
-
-Now let me verify the file looks correct and commit + push:
