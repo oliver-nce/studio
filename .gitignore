@@ -1,0 +1,53 @@
+# Reference folders (should not be cloned by bench get-app)
+Frappe Studio/
+Frappe Context/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+*.egg-info/
+.installed.cfg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Frappe / Bench
+node_modules/
+.wnf-build/
+*.pyc
+
+# Distribution
+*.tar.gz
+*.whl
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

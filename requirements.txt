@@ -1,0 +1,3 @@
+# Frappe is the only hard dependency.
+# Bench resolves the correct version from pyproject.toml at install time.
+frappe

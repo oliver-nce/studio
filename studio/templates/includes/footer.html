@@ -1,0 +1,15 @@
+{# footer.html — shared footer partial for NCE Studio portal/web pages. Include
+in a page template with: {% include "studio/templates/includes/footer.html"
+%} Frappe v15 / v16 compatible. #}
+
+<footer class="nce-studio-footer" role="contentinfo">
+	<div class="container">
+		<div class="row py-4">
+			<div class="col-12 text-center text-muted small">
+				&copy; {{ frappe.utils.now_datetime().year }} {{
+				frappe.get_website_settings("app_name") or "NCE Studio" }}. {{
+				_("All rights reserved.") }}
+			</div>
+		</div>
+	</div>
+</footer>

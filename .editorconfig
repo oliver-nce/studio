@@ -1,0 +1,25 @@
+# EditorConfig — https://editorconfig.org
+
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+
+[*.{py,rst}]
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml,toml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.csv]
+trim_trailing_whitespace = false

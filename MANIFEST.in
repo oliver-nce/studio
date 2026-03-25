@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include nce_studio *.css
+recursive-include nce_studio *.csv
+recursive-include nce_studio *.html
+recursive-include nce_studio *.ico
+recursive-include nce_studio *.js
+recursive-include nce_studio *.json
+recursive-include nce_studio *.md
+recursive-include nce_studio *.png
+recursive-include nce_studio *.py
+recursive-include nce_studio *.svg
+recursive-include nce_studio *.txt
+recursive-exclude nce_studio *.pyc

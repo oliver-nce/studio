@@ -1,0 +1,11 @@
+# Patches — executed once, in order, during `bench migrate`.
+#
+# Format:  studio.patches.<version_folder>.<patch_module_name>
+# Example: studio.patches.v1_0.rename_old_field
+#
+# Docs:    https://frappeframework.com/docs/user/en/api/patches
+#
+# TIP: After adding a patch file under studio/patches/v1_0/,
+#      register it here so `bench migrate` picks it up.
+#
+# studio.patches.v1_0.example_patch

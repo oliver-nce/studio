@@ -1,0 +1,60 @@
+{
+  "charts": [],
+  "content": "[{\"id\":\"hero\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>NCE Module</b></span>\",\"col\":12}},{\"id\":\"shortcuts\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"NCE Doctype\",\"col\":4}}]",
+  "creation": "2024-01-01 00:00:00.000000",
+  "custom_blocks": [],
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "database",
+  "idx": 0,
+  "is_hidden": 0,
+  "label": "NCE Module",
+  "links": [
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "NCE Doctype",
+      "link_count": 0,
+      "link_to": "NCE Doctype",
+      "link_type": "DocType",
+      "onboard": 1,
+      "type": "Link"
+    },
+    {
+      "dependencies": "",
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "NCE Report",
+      "link_count": 0,
+      "link_to": "NCE Report",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    }
+  ],
+  "modified": "2024-01-01 00:00:01.000000",
+  "modified_by": "Administrator",
+  "module": "NCE Module",
+  "name": "NCE Module",
+  "number_cards": [],
+  "owner": "Administrator",
+  "parent_page": "",
+  "public": 1,
+  "restrict_to_domain": "",
+  "roles": [],
+  "sequence_id": 1.0,
+  "shortcuts": [
+    {
+      "color": "Grey",
+      "doc_view": "List",
+      "label": "NCE Doctype",
+      "link_to": "NCE Doctype",
+      "stats_filter": "",
+      "type": "DocType"
+    }
+  ],
+  "title": "NCE Module"
+}

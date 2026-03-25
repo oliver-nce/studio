@@ -1,0 +1,65 @@
+/*
+ * studio.css
+ * ----------
+ * Global Desk styles for NCE Studio.
+ *
+ * This file is loaded on every Desk page when uncommented in hooks.py:
+ *   app_include_css = "/assets/studio/css/studio.css"
+ *
+ * Frappe v15/v16 compatible.
+ *
+ * TIP: Prefix all selectors with a namespace class or [data-page] attribute
+ *      to avoid leaking styles into other apps.
+ */
+
+/* --------------------------------------------------------------------------
+ *  CSS Custom Properties (design tokens)
+ *  Override these per-site by adding a Custom CSS rule in Website Settings.
+ * -------------------------------------------------------------------------- */
+:root {
+	--nce-studio-primary: #4f46e5;
+	--nce-studio-primary-light: #818cf8;
+	--nce-studio-primary-dark: #3730a3;
+	--nce-studio-text: #1f2937;
+	--nce-studio-text-muted: #6b7280;
+	--nce-studio-bg: #ffffff;
+	--nce-studio-border: #e5e7eb;
+	--nce-studio-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+ *  Example: scoped component styles
+ * -------------------------------------------------------------------------- */
+
+/*
+.nce-studio-card {
+	background: var(--nce-studio-bg);
+	border: 1px solid var(--nce-studio-border);
+	border-radius: var(--nce-studio-radius);
+	padding: 1.25rem;
+}
+
+.nce-studio-card .card-title {
+	color: var(--nce-studio-text);
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+}
+
+.nce-studio-card .card-subtitle {
+	color: var(--nce-studio-text-muted);
+	font-size: var(--text-sm);
+}
+*/
+
+/* --------------------------------------------------------------------------
+ *  Print overrides (if needed)
+ * -------------------------------------------------------------------------- */
+
+/*
+@media print {
+	.nce-studio-card {
+		border: none;
+		box-shadow: none;
+	}
+}
+*/

@@ -1,0 +1,47 @@
+{# navbar.html — navigation bar partial for portal / web pages. This file is
+included in your page templates via: {% include "templates/includes/navbar.html"
+%} Frappe v15/v16 compatible. #}
+
+<nav
+	class="navbar navbar-expand-lg navbar-light bg-white border-bottom nce-studio-navbar"
+>
+	<div class="container">
+		<a class="navbar-brand" href="/">
+			<img
+				src="/assets/studio/images/logo.png"
+				alt="{{ app_title or 'NCE Studio' }}"
+				height="32"
+				loading="lazy"
+			/>
+			<span class="ms-2 fw-semibold"
+				>{{ app_title or "NCE Studio" }}</span
+			>
+		</a>
+
+		<button
+			class="navbar-toggler"
+			type="button"
+			data-bs-toggle="collapse"
+			data-bs-target="#nceStudioNavbar"
+			aria-controls="nceStudioNavbar"
+			aria-expanded="false"
+			aria-label="Toggle navigation"
+		>
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="nceStudioNavbar">
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+				{# Add your navigation links here #}
+				<li class="nav-item">
+					<a class="nav-link" href="/">{{ _("Home") }}</a>
+				</li>
+				{#
+				<li class="nav-item">
+					<a class="nav-link" href="/about">{{ _("About") }}</a>
+				</li>
+				#}
+			</ul>
+		</div>
+	</div>
+</nav>

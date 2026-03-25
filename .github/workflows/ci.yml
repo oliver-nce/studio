@@ -1,0 +1,163 @@
+# =============================================================================
+#  CI — NCE Studio (Frappe v15 / v16 dual-target)
+#
+#  Runs linting and Frappe test suite against both v15 and v16 branches.
+#  Adjust the matrix below when dropping v15 support or adding v17.
+#
+#  Secrets required:  (none for basic CI)
+#  Secrets optional:  CODECOV_TOKEN (for coverage uploads)
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  #  Lint — fast gate, runs before the heavier test matrix
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install linters
+        run: pip install flake8 black isort
+
+      - name: flake8
+        run: flake8 nce_studio --config .flake8
+
+      - name: black (check only)
+        run: black --check --diff nce_studio
+
+      - name: isort (check only)
+        run: isort --check-only --diff nce_studio
+
+  # ---------------------------------------------------------------------------
+  #  Test — Frappe v15 + v16 matrix
+  # ---------------------------------------------------------------------------
+  test:
+    name: "Test (Frappe ${{ matrix.frappe_branch }}, Python ${{ matrix.python }})"
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Frappe v15 — Python 3.10 (minimum supported)
+          - frappe_branch: version-15
+            python: "3.10"
+            node: "18"
+            mariadb: "10.6"
+
+          # Frappe v16 — Python 3.11 (recommended minimum)
+          - frappe_branch: develop
+            python: "3.11"
+            node: "18"
+            mariadb: "10.11"
+
+    services:
+      mariadb:
+        image: mariadb:${{ matrix.mariadb }}
+        env:
+          MARIADB_ROOT_PASSWORD: frappe
+          MARIADB_DATABASE: test_site
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis-cache:
+        image: redis:7-alpine
+        ports:
+          - 13000:6379
+
+      redis-queue:
+        image: redis:7-alpine
+        ports:
+          - 11000:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install bench
+        run: pip install frappe-bench
+
+      - name: Init bench
+        run: |
+          bench init frappe-bench \
+            --frappe-branch ${{ matrix.frappe_branch }} \
+            --skip-assets \
+            --skip-redis-config-generation \
+            --python "python${{ matrix.python }}"
+
+      - name: Configure bench
+        working-directory: frappe-bench
+        run: |
+          # Point bench at the CI Redis instances
+          bench set-config -gp redis_cache  redis://localhost:13000
+          bench set-config -gp redis_queue  redis://localhost:11000
+          bench set-config -gp redis_socketio redis://localhost:11000
+
+          # MariaDB connection settings for CI
+          bench set-config -gp db_host     127.0.0.1
+          bench set-config -gp db_port     3306
+          bench set-config -gp db_root_username root
+          bench set-config -gp db_root_password frappe
+
+      - name: Install app
+        working-directory: frappe-bench
+        run: |
+          bench get-app nce_studio $GITHUB_WORKSPACE
+          bench new-site test.localhost \
+            --db-root-password frappe \
+            --admin-password admin \
+            --no-mariadb-socket
+          bench --site test.localhost install-app nce_studio
+
+      - name: Build assets
+        working-directory: frappe-bench
+        run: bench build --app nce_studio
+
+      - name: Run tests
+        working-directory: frappe-bench
+        run: |
+          bench --site test.localhost run-tests \
+            --app nce_studio \
+            --failfast \
+            2>&1 | tee test-output.log
+
+          # Fail the step if pytest reported failures
+          if grep -qE "(FAILED|ERROR)" test-output.log; then
+            echo "::error::Tests failed — see log above."
+            exit 1
+          fi

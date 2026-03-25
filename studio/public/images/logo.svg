@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect width="128" height="128" rx="28" ry="28" fill="url(#bg)"/>
+  <!-- Placeholder "N" letterform -->
+  <text x="64" y="90" font-family="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="auto">N</text>
+  <!-- Subtle bottom highlight -->
+  <rect y="100" width="128" height="28" rx="0" ry="0" fill="rgba(0,0,0,0.08)" clip-path="inset(0 0 0 0 round 0 0 28px 28px)"/>
+</svg>
