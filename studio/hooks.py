@@ -32,12 +32,18 @@ app_logo_url = "/assets/studio/images/logo.png"
 # --------------------------------------------------------------------------
 #  Includes — CSS / JS injected into every Desk page
 # --------------------------------------------------------------------------
-# app_include_css = "/assets/studio/css/studio.css"
+# app_include_css = "/files/nce_theme.css"
+# NCE theme CSS is managed by NCE Builder — not needed until theme system is bundled here
 # app_include_js = "/assets/studio/js/studio.js"
 
 # Web includes (portal / website pages)
 # web_include_css = "/assets/studio/css/studio_web.css"
 # web_include_js = "/assets/studio/js/studio_web.js"
+
+# NCE form runtime route (portal)
+website_route_rules = [
+    {"from_route": "/nce-form/<path:form_path>", "to_route": "nce_form"},
+]
 
 # --------------------------------------------------------------------------
 #  Website / Portal
@@ -64,6 +70,8 @@ app_logo_url = "/assets/studio/images/logo.png"
 # --------------------------------------------------------------------------
 #  Document Events
 # --------------------------------------------------------------------------
+# doc_events — NCE Theme Settings regeneration is handled by the
+# NCEThemeSettings.on_update() controller directly; no hook needed here.
 # doc_events = {}
 
 # --------------------------------------------------------------------------

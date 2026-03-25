@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/TreeProps",
+  "definitions": {
+    "TreeProps": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/alias-1572818682-0-219-1572818682-0-987"
+              }
+            }
+          },
+          "required": [
+            "label",
+            "children"
+          ],
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/alias-1572818682-0-219-1572818682-0-987"
+                }
+              }
+            ]
+          }
+        },
+        "nodeKey": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "rowHeight": {
+              "type": "string"
+            },
+            "indentWidth": {
+              "type": "string"
+            },
+            "showIndentationGuides": {
+              "type": "boolean"
+            },
+            "defaultCollapsed": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "node",
+        "nodeKey"
+      ],
+      "additionalProperties": false
+    },
+    "alias-1572818682-0-219-1572818682-0-987": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/alias-1572818682-0-219-1572818682-0-987"
+          }
+        }
+      },
+      "required": [
+        "label",
+        "children"
+      ],
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/alias-1572818682-0-219-1572818682-0-987"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

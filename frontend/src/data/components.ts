@@ -1,0 +1,1172 @@
+import { defineAsyncComponent, h } from "vue"
+import { FRAPPE_UI_COMPONENTS } from "@/utils/constants"
+
+import type { FrappeUIComponents, FrappeUIComponent } from "@/types"
+
+import LucideCircleAlert from "~icons/lucide/circle-alert"
+import LucideTextSearch from "~icons/lucide/text-search"
+import LucideUser from "~icons/lucide/user"
+import LucideChevronsRight from "~icons/lucide/chevrons-right"
+import LucideBadgeCheck from "~icons/lucide/badge-check"
+import LucideRectangleHorizontal from "~icons/lucide/rectangle-horizontal"
+import LucideIdCard from "~icons/lucide/id-card"
+import LucideCircleCheck from "~icons/lucide/circle-check"
+import LucideCalendar from "~icons/lucide/calendar"
+import LucideClock from "~icons/lucide/clock"
+import LucideCalendarCheck from "~icons/lucide/calendar-check"
+import LucideCalendarClock from "~icons/lucide/calendar-clock"
+import LucideCalendarSearch from "~icons/lucide/calendar-search"
+import LucideCalendarDays from "~icons/lucide/calendar-days"
+import LucideAppWindowMac from "~icons/lucide/app-window-mac"
+import LucideMinus from "~icons/lucide/minus"
+import LucideChevronDown from "~icons/lucide/chevron-down"
+import LucideCircleX from "~icons/lucide/circle-x"
+import LucideFeather from "~icons/lucide/feather"
+import LucideFileUp from "~icons/lucide/file-up"
+import LucideBookType from "~icons/lucide/book-type"
+import LucideTag from "~icons/lucide/tag"
+import LucideListCheck from "~icons/lucide/list-check"
+import LucideEllipsis from "~icons/lucide/ellipsis"
+import LucideStar from "~icons/lucide/star"
+import LucideMousePointer2 from "~icons/lucide/mouse-pointer-2"
+import LucideToggleLeft from "~icons/lucide/toggle-left"
+import LucideArrowRightLeft from "~icons/lucide/arrow-right-left"
+import LucideLetterText from "~icons/lucide/letter-text"
+import LucideALargeSmall from "~icons/lucide/a-large-small"
+import LucideEdit from "~icons/lucide/edit"
+import LucideMessageSquare from "~icons/lucide/message-square"
+import LucideListTree from "~icons/lucide/list-tree"
+import LucideCode from "~icons/lucide/code"
+import LucideRepeat from "~icons/lucide/repeat"
+import LucideFrame from "~icons/lucide/frame"
+import LucideSidebar from "~icons/lucide/sidebar"
+import LucideSquareSplitHorizontal from "~icons/lucide/square-split-horizontal"
+import LucideImage from "~icons/lucide/image"
+import LucideList from "~icons/lucide/list"
+import LucideLink from "~icons/lucide/link"
+import LucideMusic from "~icons/lucide/music"
+import LucideType from "~icons/lucide/type"
+import LucideFilePenLine from "~icons/lucide/file-pen-line"
+import LucideDollarSign from "~icons/lucide/dollar-sign"
+import LucideChartLine from "~icons/lucide/chart-line"
+import LucideChartPie from "~icons/lucide/chart-pie"
+import LucideListFilter from "~icons/lucide/list-filter"
+import LucideFormInput from "~icons/lucide/form-input"
+import LucideHeading from "~icons/lucide/heading"
+import LucideLayoutList from "~icons/lucide/layout-list"
+import LucideTable from "~icons/lucide/table"
+import LucidePlay from "~icons/lucide/play"
+
+export const COMPONENTS: FrappeUIComponents = {
+	TextBlock: {
+		name: "TextBlock",
+		title: "Text Block",
+		icon: LucideType,
+		initialState: {
+			text: "Text Block",
+			tag: "p",
+		},
+		hideProps: ["fontSize"],
+	},
+	Alert: {
+		name: "Alert",
+		title: "Alert",
+		icon: LucideCircleAlert,
+		initialState: {
+			title: "This user is inactive",
+			description: "Please enable the user to allow login access.",
+			theme: "yellow",
+		},
+	},
+	Autocomplete: {
+		name: "Autocomplete",
+		title: "Autocomplete",
+		icon: LucideTextSearch,
+		initialState: {
+			placeholder: "Select Person",
+			options: [
+				{
+					label: "John Doe",
+					value: "john-doe",
+					image: "https://randomuser.me/api/portraits/men/59.jpg",
+				},
+				{
+					label: "Jane Doe",
+					value: "jane-doe",
+					image: "https://randomuser.me/api/portraits/women/58.jpg",
+				},
+				{
+					label: "John Smith",
+					value: "john-smith",
+					image: "https://randomuser.me/api/portraits/men/59.jpg",
+				},
+				{
+					label: "Jane Smith",
+					value: "jane-smith",
+					image: "https://randomuser.me/api/portraits/women/59.jpg",
+				},
+				{
+					label: "John Wayne",
+					value: "john-wayne",
+					image: "https://randomuser.me/api/portraits/men/57.jpg",
+				},
+				{
+					label: "Jane Wayne",
+					value: "jane-wayne",
+					image: "https://randomuser.me/api/portraits/women/51.jpg",
+				},
+			],
+		},
+	},
+	Avatar: {
+		name: "Avatar",
+		title: "Avatar",
+		icon: LucideUser,
+		initialState: {
+			shape: "circle",
+			size: "md",
+			image: "https://avatars.githubusercontent.com/u/499550?s=60&v=4",
+			label: "EY",
+		},
+	},
+	Badge: {
+		name: "Badge",
+		title: "Badge",
+		icon: LucideBadgeCheck,
+		initialState: {
+			variant: "subtle",
+			theme: "green",
+			size: "sm",
+			label: "Active",
+		},
+	},
+	Breadcrumbs: {
+		name: "Breadcrumbs",
+		title: "Breadcrumbs",
+		icon: LucideChevronsRight,
+		initialState: {
+			items: [
+				{
+					label: "Home",
+					route: { name: "Home" },
+				},
+				{
+					label: "List",
+					route: "/components/breadcrumbs",
+				},
+			],
+		},
+	},
+	Button: {
+		name: "Button",
+		title: "Button",
+		icon: LucideRectangleHorizontal,
+		initialState: {
+			label: "Submit",
+			variant: "solid",
+		},
+	},
+	Card: {
+		name: "Card",
+		title: "Card",
+		icon: LucideIdCard,
+		initialState: {
+			title: "John Doe",
+			subtitle: "Engineering Lead",
+		},
+	},
+	Checkbox: {
+		name: "Checkbox",
+		title: "Checkbox",
+		icon: LucideCircleCheck,
+		initialState: {
+			label: "Enable feature",
+			padding: true,
+			checked: true,
+		},
+	},
+	Combobox: {
+		name: "Combobox",
+		title: "Combobox",
+		icon: LucideListCheck,
+		initialState: {
+			placeholder: "Select Fruit",
+			options: [
+				{
+					group: "Fruits",
+					options: [
+						{
+							label: "Apple",
+							value: "apple",
+							icon: "🍎",
+						},
+						{
+							label: "Banana",
+							value: "banana",
+							icon: "🍌",
+						},
+						{
+							label: "Orange",
+							value: "orange",
+							icon: "🍊",
+						},
+						{
+							label: "Grape",
+							value: "grape",
+							icon: "🍇",
+						},
+					],
+				},
+				{
+					group: "Vegetables",
+					options: [
+						{
+							label: "Carrot",
+							value: "carrot",
+							icon: "🥕",
+						},
+						{
+							label: "Broccoli",
+							value: "broccoli",
+							icon: "🥦",
+						},
+						{
+							label: "Tomato",
+							value: "tomato",
+							icon: "🍅",
+						},
+						{
+							label: "Lettuce",
+							value: "lettuce",
+							icon: "🥬",
+						},
+					],
+				},
+			],
+		},
+	},
+	Calendar: {
+		name: "Calendar",
+		title: "Calendar",
+		icon: LucideCalendar,
+		initialState: {
+			config: {
+				defaultMode: "Month",
+				isEditMode: true,
+				eventIcons: {},
+				allowCustomClickEvents: true,
+				redundantCellHeight: 100,
+				enableShortcuts: true,
+			},
+			events: [
+				{
+					title: "English by Ryan Mathew",
+					participant: "Ryan Mathew",
+					id: "EDU-CSH-2024-00091",
+					venue: "CNF-ROOM-2024-00001",
+					fromDate: "2024-07-08 16:30:00",
+					toDate: "2024-07-08 17:30:00",
+					color: "green",
+				},
+				{
+					title: "English by Ryan Mathew",
+					participant: "Ryan Mathew",
+					id: "EDU-CSH-2024-00092",
+					venue: "CNF-ROOM-2024-00002",
+					fromDate: "2024-07-08 13:30:00",
+					toDate: "2024-07-08 17:30:00",
+					color: "green",
+				},
+				{
+					title: "English by Sheldon",
+					participant: "Sheldon",
+					id: "EDU-CSH-2024-00093",
+					venue: "CNF-ROOM-2024-00001",
+					fromDate: "2024-07-09 10:30:00",
+					toDate: "2024-07-09 11:30:00",
+					color: "green",
+				},
+				{
+					title: "English by Ryan Mathew",
+					participant: "Ryan Mathew",
+					id: "EDU-CSH-2024-00094",
+					venue: "CNF-ROOM-2024-00001",
+					fromDate: "2024-07-17 16:30:00",
+					toDate: "2024-07-17 17:30:00",
+					color: "green",
+				},
+				{
+					title: "Google Meet with John ",
+					participant: "John",
+					id: "#htrht41",
+					venue: "Google Meet",
+					fromDate: "2024-07-21 00:00:00",
+					toDate: "2024-07-21 23:59:59",
+					color: "amber",
+					isFullDay: true,
+				},
+				{
+					title: "Zoom Meet with Sheldon",
+					participant: "Sheldon",
+					id: "#htrht42",
+					venue: "Google Meet",
+					fromDate: "2024-07-21 00:00:00",
+					toDate: "2024-07-21 23:59:59",
+					color: "amber",
+					isFullDay: true,
+				},
+			],
+		},
+	},
+	DatePicker: {
+		name: "DatePicker",
+		title: "Date",
+		icon: LucideCalendarCheck,
+		initialState: {
+			placeholder: "Select Date",
+		},
+	},
+	TimePicker: {
+		name: "TimePicker",
+		title: "Time",
+		icon: LucideClock,
+		initialState: {
+			placeholder: "Select Time",
+		},
+	},
+	DateTimePicker: {
+		name: "DateTimePicker",
+		title: "Date Time",
+		icon: LucideCalendarClock,
+		initialState: {
+			placeholder: "Select Date Time",
+		},
+	},
+	DateRangePicker: {
+		name: "DateRangePicker",
+		title: "Date Range",
+		icon: LucideCalendarSearch,
+		initialState: {
+			placeholder: "Select Date Range",
+		},
+	},
+	MonthPicker: {
+		name: "MonthPicker",
+		title: "Month Picker",
+		icon: LucideCalendarDays,
+		initialState: {
+			placeholder: "Select Month",
+		},
+	},
+	Dialog: {
+		name: "Dialog",
+		title: "Dialog",
+		icon: LucideAppWindowMac,
+		initialState: {
+			modelValue: false,
+			options: {
+				title: "Confirm",
+				message: "Are you sure you want to confirm this action?",
+				size: "xl",
+				actions: [
+					{
+						label: "Confirm",
+						variant: "solid",
+						onClick: () => {},
+					},
+				],
+			},
+		},
+		editInFragmentMode: true,
+		proxyComponent: defineAsyncComponent(() => import("@/components/ProxyComponents/ProxyDialog.vue")),
+	},
+	Divider: {
+		name: "Divider",
+		title: "Divider",
+		icon: LucideMinus,
+	},
+	Dropdown: {
+		name: "Dropdown",
+		title: "Dropdown",
+		icon: LucideChevronDown,
+		initialState: {
+			options: [
+				{
+					label: "Edit Title",
+					onClick: () => {},
+					icon: "edit-2",
+				},
+				{
+					label: "Manage Members",
+					onClick: () => {},
+					icon: "users",
+				},
+				{
+					label: "Delete this project",
+					onClick: () => {},
+					icon: "trash",
+				},
+			],
+			button: { label: "Actions" },
+		},
+	},
+	ErrorMessage: {
+		name: "ErrorMessage",
+		title: "Error Message",
+		icon: LucideCircleX,
+		initialState: {
+			message: "Transaction failed due to insufficient balance",
+		},
+	},
+	FeatherIcon: {
+		name: "FeatherIcon",
+		title: "FeatherIcon",
+		icon: LucideFeather,
+		initialState: {
+			name: "activity",
+			class: "h-6 w-6",
+		},
+	},
+	FileUploader: {
+		name: "FileUploader",
+		title: "File Uploader",
+		icon: LucideFileUp,
+		initialState: {
+			label: "Upload File",
+			fileTypes: "['image/*']",
+		},
+	},
+	Filter: {
+		name: "Filter",
+		title: "Filter",
+		icon: LucideListFilter,
+		initialState: {
+			doctype: "User",
+			filters: {
+				enabled: 1,
+			},
+		},
+	},
+	FormControl: {
+		name: "FormControl",
+		title: "Form Control",
+		icon: LucideBookType,
+		initialState: {
+			type: "text",
+			label: "Name",
+			placeholder: "John Doe",
+			autocomplete: "off",
+		},
+		additionalProps: {
+			modelValue: { required: false },
+			placeholder: { required: false, type: String },
+			options: {
+				required: false,
+				type: Array,
+				default: () => ["John Doe", "Jane Doe"],
+				condition: (state: Record<string, any>) => state.type === "select" || state.type === "autocomplete",
+			},
+			disabled: { type: Boolean },
+		},
+	},
+	FormLabel: {
+		name: "FormLabel",
+		title: "Form Label",
+		icon: LucideTag,
+		initialState: {
+			label: "Form Label",
+		},
+	},
+	ListView: {
+		name: "ListView",
+		title: "List View",
+		icon: LucideList,
+		initialState: {
+			columns: [
+				{
+					label: "Name",
+					key: "name",
+					width: 3,
+					getLabel: ({ row }: { row: any }) => {
+						return row.name
+					},
+					prefix: ({ row }: { row: any }) => {
+						// @ts-ignore
+						return h(Avatar, {
+							shape: "circle",
+							image: row.user_image,
+							size: "sm",
+						})
+					},
+				},
+				{
+					label: "Email",
+					key: "email",
+					width: "200px",
+				},
+				{
+					label: "Role",
+					key: "role",
+				},
+				{
+					label: "Status",
+					key: "status",
+				},
+			],
+			rows: [
+				{
+					id: 1,
+					name: "John Doe",
+					email: "john@doe.com",
+					status: "Active",
+					role: "Developer",
+					user_image: "https://avatars.githubusercontent.com/u/499550",
+				},
+				{
+					id: 2,
+					name: "Jane Doe",
+					email: "jane@doe.com",
+					status: "Inactive",
+					role: "HR",
+					user_image: "https://avatars.githubusercontent.com/u/499120",
+				},
+			],
+			rowKey: "id",
+		},
+	},
+	Link: {
+		name: "Link",
+		title: "Link",
+		icon: LucideLink,
+		initialState: {
+			doctype: "User",
+			filters: {
+				enabled: 1,
+			},
+		},
+	},
+	MultiSelect: {
+		name: "MultiSelect",
+		title: "Multi Select",
+		icon: LucideListCheck,
+		initialState: {
+			placeholder: "Select Fruits",
+			options: [
+				{
+					label: "Apple",
+					value: "apple",
+				},
+				{
+					label: "Banana",
+					value: "banana",
+				},
+				{
+					label: "Orange",
+					value: "orange",
+				},
+				{
+					label: "Grape",
+					value: "grape",
+				},
+			],
+		},
+	},
+	Progress: {
+		name: "Progress",
+		title: "Progress",
+		icon: LucideEllipsis,
+		initialState: {
+			value: 50,
+			size: "sm",
+			label: "Progress",
+		},
+	},
+	Rating: {
+		name: "Rating",
+		title: "Rating",
+		icon: LucideStar,
+		initialState: {
+			label: "Rating",
+		},
+	},
+	Select: {
+		name: "Select",
+		title: "Select",
+		icon: LucideMousePointer2,
+		initialState: {
+			placeholder: "Person",
+			options: [
+				{
+					label: "John Doe",
+					value: "john-doe",
+				},
+				{
+					label: "Jane Doe",
+					value: "jane-doe",
+				},
+				{
+					label: "John Smith",
+					value: "john-smith",
+				},
+				{
+					label: "Jane Smith",
+					value: "jane-smith",
+					disabled: true,
+				},
+				{
+					label: "John Wayne",
+					value: "john-wayne",
+				},
+				{
+					label: "Jane Wayne",
+					value: "jane-wayne",
+				},
+			],
+		},
+	},
+	Switch: {
+		name: "Switch",
+		title: "Switch",
+		icon: LucideToggleLeft,
+		initialState: {
+			label: "Enable Notifications",
+			description: "Get notified when someone mentions you in a comment",
+			modelValue: true,
+		},
+	},
+	Tabs: {
+		name: "Tabs",
+		title: "Tabs",
+		icon: LucideArrowRightLeft,
+		initialState: {
+			as: "div",
+			tabs: [{ label: "Github" }, { label: "Twitter" }, { label: "Linkedin" }],
+		},
+		expandArrayProps: true,
+	},
+	TabButtons: {
+		name: "TabButtons",
+		title: "Tab Buttons",
+		icon: LucideArrowRightLeft,
+		initialState: {
+			buttons: [
+				{
+					label: "My Tasks",
+					value: "mytasks",
+				},
+				{
+					label: "Team Tasks",
+					value: "teamtasks",
+				},
+			],
+		},
+	},
+	Textarea: {
+		name: "Textarea",
+		title: "Textarea",
+		icon: LucideLetterText,
+		initialState: {
+			placeholder: "Enter your message",
+		},
+	},
+	TextInput: {
+		name: "TextInput",
+		title: "Text Input",
+		icon: LucideALargeSmall,
+		initialState: {
+			placeholder: "Enter your name",
+		},
+	},
+	TextEditor: {
+		name: "TextEditor",
+		title: "Text Editor",
+		icon: LucideEdit,
+		initialState: {
+			modelValue: "Type something...",
+			editorClass: "prose-sm max-w-none min-h-[4rem] border rounded-b-lg border-t-0 p-2",
+			editable: true,
+			fixedMenu: true,
+			bubbleMenu: true,
+		},
+		overrideProps: {
+			bubbleMenu: {
+				type: "boolean",
+				inputType: "checkbox",
+			},
+			fixedMenu: {
+				type: "boolean",
+				inputType: "checkbox",
+			},
+			floatingMenu: {
+				type: "boolean",
+				inputType: "checkbox",
+			},
+			starterkitOptions: {
+				type: "object",
+				inputType: "code",
+			},
+		},
+	},
+	Tooltip: {
+		name: "Tooltip",
+		title: "Tooltip",
+		icon: LucideMessageSquare,
+		initialState: {
+			text: "This is a tooltip",
+		},
+	},
+	Tree: {
+		name: "Tree",
+		title: "Tree",
+		icon: LucideListTree,
+		initialState: {
+			options: {
+				showIndentationGuides: true,
+				rowHeight: "25px",
+				indentWidth: "15px",
+			},
+			nodeKey: "name",
+			node: {
+				name: "guest",
+				label: "Guest",
+				children: [
+					{
+						name: "downloads",
+						label: "Downloads",
+						children: [
+							{
+								name: "download.zip",
+								label: "download.zip",
+								children: [
+									{
+										name: "image.png",
+										label: "image.png",
+										children: [],
+									},
+								],
+							},
+						],
+					},
+					{
+						name: "documents",
+						label: "Documents",
+						children: [
+							{
+								name: "somefile.txt",
+								label: "somefile.txt",
+								children: [],
+							},
+							{
+								name: "somefile.pdf",
+								label: "somefile.pdf",
+								children: [],
+							},
+						],
+					},
+				],
+			},
+		},
+	},
+	// Studio Components
+	Repeater: {
+		name: "Repeater",
+		title: "Repeater",
+		icon: LucideRepeat,
+	},
+	HTML: {
+		name: "HTML",
+		title: "HTML",
+		icon: LucideCode,
+		initialState: {
+			html: "<p>Your HTML content here</p>",
+		},
+		overrideProps: {
+			html: {
+				type: "string",
+				inputType: "html",
+			},
+		},
+	},
+	Header: {
+		name: "Header",
+		title: "Header",
+		icon: LucideFrame,
+		initialState: {
+			title: "Frappe",
+			menuItems: [
+				{ label: "Home", url: "#" },
+				{ label: "Settings", url: "#" },
+			],
+		},
+	},
+	Sidebar: {
+		name: "Sidebar",
+		title: "Sidebar",
+		icon: LucideSidebar,
+		initialState: {
+			header: {
+				title: "Frappe",
+				subtitle: "Jane Doe",
+				menuItems: [
+					{
+						label: "Help",
+						to: "/help",
+						icon: "{{ getIcon('help') }}",
+						onClick: () => alert("Help clicked!"),
+					},
+					{
+						label: "Logout",
+						to: "/logout",
+						icon: "{{ getIcon('logout') }}",
+						onClick: () => alert("Logging out..."),
+					},
+				],
+			},
+			sections: [
+				{
+					label: "",
+					items: [{ label: "Notifications", icon: "{{ getIcon('bell') }}", to: "" }],
+				},
+				{
+					label: "",
+					items: [
+						{ label: "Home", icon: "{{ getIcon('house') }}", to: "" },
+						{ label: "Profile", icon: "{{ getIcon('user-pen') }}", to: "" },
+						{ label: "Settings", icon: "{{ getIcon('settings') }}", to: "" },
+					],
+				},
+			],
+		},
+	},
+	SplitView: {
+		name: "SplitView",
+		title: "Split View",
+		icon: LucideSquareSplitHorizontal,
+		initialSlots: ["left", "right"],
+	},
+	AvatarCard: {
+		name: "AvatarCard",
+		title: "Avatar Card",
+		icon: LucideImage,
+		initialState: {
+			title: "Up&Up",
+			subtitle: "Coldplay",
+			imageURL: "https://upload.wikimedia.org/wikipedia/en/e/e9/Coldplay%2C_Up%26Up%2C_Artwork.jpg",
+		},
+	},
+	CardList: {
+		name: "CardList",
+		title: "Card List",
+		icon: LucideList,
+		initialState: {
+			title: "Card List",
+			cards: [
+				{
+					title: "Card Title",
+					subtitle: "Subtitle",
+					imageURL: "https://avatars.githubusercontent.com/u/499550",
+				},
+				{
+					title: "Card Title",
+					subtitle: "Subtitle",
+					imageURL: "https://avatars.githubusercontent.com/u/499120",
+				},
+			],
+		},
+	},
+	Audio: {
+		name: "Audio",
+		title: "Audio",
+		icon: LucideMusic,
+		initialState: {
+			file: "https://cdn.uppbeat.io/audio-output/208/3691/main-version/streaming-previews/STREAMING-achievement-philip-anderson-main-version-01-31-13804.mp3",
+		},
+	},
+	ImageView: {
+		name: "ImageView",
+		title: "Image View",
+		icon: LucideImage,
+		initialState: {
+			image: "https://blocks.astratic.com/img/general-img-square.png",
+			size: "xs",
+		},
+	},
+	AppHeader: {
+		name: "AppHeader",
+		title: "App Header",
+		icon: LucideFrame,
+		initialState: {
+			title: "Frappe",
+		},
+	},
+	BottomTabs: {
+		name: "BottomTabs",
+		title: "Bottom Tabs",
+		icon: LucideArrowRightLeft,
+		initialState: {
+			tabs: [
+				{
+					label: "Home",
+					icon: "home",
+					route: "/",
+				},
+				{
+					label: "Settings",
+					icon: "settings",
+					route: "/settings",
+				},
+			],
+		},
+	},
+	MarkdownEditor: {
+		name: "MarkdownEditor",
+		title: "Markdown",
+		icon: LucideFilePenLine,
+		initialState: {
+			modelValue: "# This is a markdown editor",
+		},
+	},
+	NumberChart: {
+		name: "NumberChart",
+		title: "Number Chart",
+		icon: LucideDollarSign,
+		initialState: {
+			config: {
+				title: "Total Sales",
+				value: 123456,
+				prefix: "$",
+				delta: 10,
+				deltaSuffix: "% MoM",
+				negativeIsBetter: false,
+			},
+		},
+	},
+	AxisChart: {
+		name: "AxisChart",
+		title: "Axis Chart",
+		icon: LucideChartLine,
+		initialState: {
+			config: {
+				data: [
+					{
+						month: "2021-01-01",
+						sales: 200,
+					},
+					{
+						month: "2021-02-01",
+						sales: 300,
+					},
+					{
+						month: "2021-03-01",
+						sales: 250,
+					},
+					{
+						month: "2021-04-01",
+						sales: 350,
+					},
+					{
+						month: "2021-05-01",
+						sales: 400,
+					},
+					{
+						month: "2021-06-01",
+						sales: 300,
+					},
+				],
+				title: "Monthly Sales",
+				subtitle: "Sales data for first half of the year",
+				xAxis: {
+					key: "month",
+					type: "time",
+					title: "Month",
+					timeGrain: "month",
+				},
+				yAxis: {
+					title: "Amount ($)",
+					echartOptions: {
+						min: 0,
+						max: 800,
+					},
+				},
+				series: [
+					{
+						name: "sales",
+						type: "bar",
+					},
+				],
+			},
+		},
+	},
+	DonutChart: {
+		name: "DonutChart",
+		title: "Donut Chart",
+		icon: LucideChartPie,
+		initialState: {
+			config: {
+				data: [
+					{
+						product: "Apple Watch",
+						sales: 400,
+					},
+					{
+						product: "Services",
+						sales: 400,
+					},
+					{
+						product: "iMac",
+						sales: 350,
+					},
+					{
+						product: "Accessories",
+						sales: 350,
+					},
+					{
+						product: "iPad",
+						sales: 300,
+					},
+					{
+						product: "AirPods",
+						sales: 300,
+					},
+					{
+						product: "Apple TV",
+						sales: 300,
+					},
+					{
+						product: "Others",
+						sales: 300,
+					},
+					{
+						product: "Macbook",
+						sales: 250,
+					},
+					{
+						product: "Beats",
+						sales: 250,
+					},
+					{
+						product: "iPhone",
+						sales: 200,
+					},
+					{
+						product: "HomePod",
+						sales: 200,
+					},
+				],
+				title: "Product Sales Distribution",
+				subtitle: "Sales distribution across products",
+				categoryColumn: "product",
+				valueColumn: "sales",
+			},
+		},
+	},
+	// --- NCE Form Components ---
+	NceFormField: {
+		name: "NceFormField",
+		title: "Form Field",
+		icon: LucideFormInput,
+		initialState: {
+			fieldPath: "",
+			editable: true,
+		},
+		additionalProps: {
+			fieldPath: { type: "String", default: "" },
+			fieldType: { type: "String", default: "" },
+			label: { type: "String", default: "" },
+			editable: { type: "Boolean", default: true },
+			placeholder: { type: "String", default: "" },
+			required: { type: "Boolean", default: false },
+		},
+	},
+	NceCaption: {
+		name: "NceCaption",
+		title: "Caption",
+		icon: LucideHeading,
+		initialState: {
+			text: "Caption",
+			level: "label",
+		},
+		additionalProps: {
+			text: { type: "String", default: "Caption" },
+			level: { type: "String", default: "label" },
+			fieldPath: { type: "String", default: "" },
+		},
+	},
+	NceTabContainer: {
+		name: "NceTabContainer",
+		title: "Tab Container",
+		icon: LucideLayoutList,
+		initialState: {
+			tabs: [{ label: "Tab 1", fields: [] }],
+		},
+		additionalProps: {
+			tabs: { type: "Array", default: [] },
+		},
+		expandArrayProps: true,
+	},
+	NcePortalList: {
+		name: "NcePortalList",
+		title: "Portal List",
+		icon: LucideTable,
+		initialState: {
+			fieldPath: "",
+			editable: true,
+			addRows: true,
+			deleteRows: true,
+		},
+		additionalProps: {
+			fieldPath: { type: "String", default: "" },
+			columns: { type: "Array", default: [] },
+			editable: { type: "Boolean", default: true },
+			addRows: { type: "Boolean", default: true },
+			deleteRows: { type: "Boolean", default: true },
+		},
+		expandArrayProps: true,
+	},
+	NceActionButton: {
+		name: "NceActionButton",
+		title: "Action Button",
+		icon: LucidePlay,
+		initialState: {
+			action: "save",
+			label: "Save",
+			variant: "solid",
+		},
+		additionalProps: {
+			action: { type: "String", default: "save" },
+			methodName: { type: "String", default: "" },
+			navigateTo: { type: "String", default: "" },
+			label: { type: "String", default: "Save" },
+			variant: { type: "String", default: "solid" },
+			confirmMessage: { type: "String", default: "" },
+		},
+	},
+}
+
+const proxyComponentMap = new Map<string, any>()
+Object.values(COMPONENTS).forEach((component: FrappeUIComponent) => {
+	if (component.proxyComponent) {
+		proxyComponentMap.set(component.name, component.proxyComponent)
+	}
+})
+
+function isFrappeUIComponent(name: string) {
+	return FRAPPE_UI_COMPONENTS.includes(name)
+}
+
+function getProxyComponent(name: string) {
+	return proxyComponentMap.get(name)
+}
+
+function get(name: string): FrappeUIComponent | undefined {
+	return COMPONENTS[name] || undefined
+}
+
+export default {
+	...COMPONENTS,
+	list: Object.values(COMPONENTS),
+	names: Object.keys(COMPONENTS),
+	getProxyComponent,
+	isFrappeUIComponent,
+	get,
+}

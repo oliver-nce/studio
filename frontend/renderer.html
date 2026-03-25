@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- Built with Frappe Studio -->
+<html lang="en" class="h-full">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" href="/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{{ app_title }}</title>
+	</head>
+	<body class="h-full">
+		<div id="app" class="h-full"></div>
+		<div id="modals"></div>
+		<div id="popovers"></div>
+		<script>
+			window.csrf_token = "{{ csrf_token }}";
+			window.is_preview = "{{ is_preview }}";
+			window.app_name = "{{ app_name }}";
+			window.app_route = "{{ app_route }}";
+			window.app_title = "{{ app_title }}";
+			window.app_pages = {{ app_pages|tojson }};
+			window.is_developer_mode = {{ is_developer_mode }};
+		</script>
+		{% if is_developer_mode %}
+			<!-- workaround for HMR in renderer during development -->
+			<script type="module" src="http://{{ site_name }}:8080/@vite/client"></script>
+			<script type="module" src="http://{{ site_name }}:8080/src/renderer.ts"></script>
+		{% else %}
+			<script type="module" src="/src/renderer.ts"></script>
+		{% endif %}
+
+		{% if assets_not_found %}
+		<script>
+			console.error("Could not find app assets for Studio App. Currently, using the default renderer as a fallback. Please publish the app again to generate assets.")
+		</script>
+		{% endif %}
+	</body>
+</html>

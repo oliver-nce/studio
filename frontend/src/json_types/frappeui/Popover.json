@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/PopoverProps",
+  "definitions": {
+    "PopoverProps": {
+      "type": "object",
+      "properties": {
+        "show": {
+          "type": "boolean"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "click",
+            "hover"
+          ]
+        },
+        "hoverDelay": {
+          "type": "number"
+        },
+        "leaveDelay": {
+          "type": "number"
+        },
+        "placement": {
+          "type": "string",
+          "enum": [
+            "top-start",
+            "top-end",
+            "bottom-start",
+            "bottom-end",
+            "right-start",
+            "right-end",
+            "left-start",
+            "left-end",
+            "top",
+            "bottom",
+            "right",
+            "left"
+          ]
+        },
+        "popoverClass": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "transition": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "default",
+            null
+          ]
+        },
+        "hideOnBlur": {
+          "type": "boolean"
+        },
+        "matchTargetWidth": {
+          "type": "boolean"
+        },
+        "offset": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

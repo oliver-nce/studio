@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DatePickerProps",
+  "definitions": {
+    "DatePickerProps": {
+      "type": "object",
+      "properties": {
+        "placement": {
+          "type": "string",
+          "enum": [
+            "top-start",
+            "top-end",
+            "bottom-start",
+            "bottom-end",
+            "right-start",
+            "right-end",
+            "left-start",
+            "left-end"
+          ]
+        },
+        "format": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "subtle",
+            "ghost",
+            "outline"
+          ]
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "inputClass": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "boolean"
+              }
+            }
+          ]
+        },
+        "allowCustom": {
+          "type": "boolean"
+        },
+        "autoClose": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        },
+        "clearable": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "string"
+        },
+        "modelValue": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

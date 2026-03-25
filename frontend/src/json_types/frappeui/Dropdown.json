@@ -1,0 +1,452 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DropdownProps",
+  "definitions": {
+    "DropdownProps": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "object",
+          "properties": {
+            "theme": {
+              "type": "string",
+              "enum": [
+                "gray",
+                "blue",
+                "green",
+                "red"
+              ]
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "sm",
+                "md",
+                "lg",
+                "xl",
+                "2xl"
+              ]
+            },
+            "variant": {
+              "type": "string",
+              "enum": [
+                "solid",
+                "subtle",
+                "outline",
+                "ghost"
+              ]
+            },
+            "label": {
+              "type": "string"
+            },
+            "icon": {
+              "type": [
+                "string"
+              ]
+            },
+            "iconLeft": {
+              "type": [
+                "string"
+              ]
+            },
+            "iconRight": {
+              "type": [
+                "string"
+              ]
+            },
+            "tooltip": {
+              "type": "string"
+            },
+            "loading": {
+              "type": "boolean"
+            },
+            "loadingText": {
+              "type": "string"
+            },
+            "disabled": {
+              "type": "boolean"
+            },
+            "route": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            "link": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "button",
+                "submit",
+                "reset"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "switch": {
+                    "type": "boolean"
+                  },
+                  "disabled": {
+                    "type": "boolean"
+                  },
+                  "switchValue": {
+                    "type": "boolean"
+                  },
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "gray",
+                      "red"
+                    ]
+                  },
+                  "component": {},
+                  "onClick": {
+                    "$comment": "(val: any) => void",
+                    "type": "object",
+                    "properties": {
+                      "namedArgs": {
+                        "type": "object",
+                        "properties": {
+                          "val": {}
+                        },
+                        "required": [
+                          "val"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "route": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "$comment": "() => boolean"
+                  },
+                  "submenu": {
+                    "$ref": "#/definitions/alias-1044900505-639-690-1044900505-0-1196"
+                  }
+                },
+                "required": [
+                  "label"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "number"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "icon": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "switch": {
+                          "type": "boolean"
+                        },
+                        "disabled": {
+                          "type": "boolean"
+                        },
+                        "switchValue": {
+                          "type": "boolean"
+                        },
+                        "theme": {
+                          "type": "string",
+                          "enum": [
+                            "gray",
+                            "red"
+                          ]
+                        },
+                        "component": {},
+                        "onClick": {
+                          "$comment": "(val: any) => void",
+                          "type": "object",
+                          "properties": {
+                            "namedArgs": {
+                              "type": "object",
+                              "properties": {
+                                "val": {}
+                              },
+                              "required": [
+                                "val"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "route": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "object"
+                            }
+                          ]
+                        },
+                        "condition": {
+                          "$comment": "() => boolean"
+                        },
+                        "submenu": {
+                          "$ref": "#/definitions/alias-1044900505-639-690-1044900505-0-1196"
+                        }
+                      },
+                      "required": [
+                        "label"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "hideLabel": {
+                    "type": "boolean"
+                  },
+                  "theme": {
+                    "type": "string",
+                    "enum": [
+                      "gray",
+                      "red"
+                    ]
+                  }
+                },
+                "required": [
+                  "group",
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "placement": {
+          "type": "string"
+        },
+        "side": {
+          "type": "string",
+          "enum": [
+            "top",
+            "right",
+            "bottom",
+            "left"
+          ]
+        },
+        "offset": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "alias-1044900505-639-690-1044900505-0-1196": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "icon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "switch": {
+                "type": "boolean"
+              },
+              "disabled": {
+                "type": "boolean"
+              },
+              "switchValue": {
+                "type": "boolean"
+              },
+              "theme": {
+                "type": "string",
+                "enum": [
+                  "gray",
+                  "red"
+                ]
+              },
+              "component": {},
+              "onClick": {
+                "$comment": "(val: any) => void",
+                "type": "object",
+                "properties": {
+                  "namedArgs": {
+                    "type": "object",
+                    "properties": {
+                      "val": {}
+                    },
+                    "required": [
+                      "val"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "route": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "condition": {
+                "$comment": "() => boolean"
+              },
+              "submenu": {
+                "$ref": "#/definitions/alias-1044900505-639-690-1044900505-0-1196"
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "number"
+              },
+              "group": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "icon": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "switch": {
+                      "type": "boolean"
+                    },
+                    "disabled": {
+                      "type": "boolean"
+                    },
+                    "switchValue": {
+                      "type": "boolean"
+                    },
+                    "theme": {
+                      "type": "string",
+                      "enum": [
+                        "gray",
+                        "red"
+                      ]
+                    },
+                    "component": {},
+                    "onClick": {
+                      "$comment": "(val: any) => void",
+                      "type": "object",
+                      "properties": {
+                        "namedArgs": {
+                          "type": "object",
+                          "properties": {
+                            "val": {}
+                          },
+                          "required": [
+                            "val"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "route": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "condition": {
+                      "$comment": "() => boolean"
+                    },
+                    "submenu": {
+                      "$ref": "#/definitions/alias-1044900505-639-690-1044900505-0-1196"
+                    }
+                  },
+                  "required": [
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "hideLabel": {
+                "type": "boolean"
+              },
+              "theme": {
+                "type": "string",
+                "enum": [
+                  "gray",
+                  "red"
+                ]
+              }
+            },
+            "required": [
+              "group",
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }
+}

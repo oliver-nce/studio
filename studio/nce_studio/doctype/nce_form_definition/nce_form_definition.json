@@ -1,0 +1,99 @@
+{
+  "doctype": "DocType",
+  "name": "NCE Form Definition",
+  "module": "NCE Studio",
+  "naming_rule": "Expression",
+  "autoname": "format:NCE-FORM-{#####}",
+  "fields": [
+    {
+      "fieldname": "form_title",
+      "fieldtype": "Data",
+      "label": "Form Title",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "target_doctype",
+      "fieldtype": "Link",
+      "label": "Target DocType",
+      "options": "DocType",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    { "fieldname": "studio_page", "fieldtype": "Data", "label": "Studio Page" },
+    { "fieldname": "form_schema", "fieldtype": "JSON", "label": "Form Schema" },
+    {
+      "fieldname": "field_mapping",
+      "fieldtype": "JSON",
+      "label": "Field Mapping"
+    },
+    { "fieldname": "grid_layout", "fieldtype": "JSON", "label": "Grid Layout" },
+    {
+      "fieldname": "grid_config",
+      "fieldtype": "JSON",
+      "label": "Grid Configuration"
+    },
+    { "fieldname": "tab_layout", "fieldtype": "JSON", "label": "Tab Layout" },
+    {
+      "fieldname": "section_submission",
+      "fieldtype": "Section Break",
+      "label": "Submission"
+    },
+    {
+      "fieldname": "submission_action",
+      "fieldtype": "Select",
+      "label": "Submission Action",
+      "options": "Save\nSubmit\nWorkflow\nCustom API",
+      "default": "Save"
+    },
+    {
+      "fieldname": "custom_api_endpoint",
+      "fieldtype": "Data",
+      "label": "Custom API Endpoint"
+    },
+    {
+      "fieldname": "section_scripts",
+      "fieldtype": "Section Break",
+      "label": "Scripts"
+    },
+    {
+      "fieldname": "on_load_script",
+      "fieldtype": "Code",
+      "label": "On Load Script",
+      "options": "JavaScript"
+    },
+    {
+      "fieldname": "on_submit_script",
+      "fieldtype": "Code",
+      "label": "On Submit Script",
+      "options": "JavaScript"
+    },
+    {
+      "fieldname": "validation_rules",
+      "fieldtype": "JSON",
+      "label": "Validation Rules"
+    },
+    {
+      "fieldname": "section_access",
+      "fieldtype": "Section Break",
+      "label": "Access Control"
+    },
+    {
+      "fieldname": "allowed_roles",
+      "fieldtype": "JSON",
+      "label": "Allowed Roles"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    }
+  ],
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "track_changes": 1
+}
