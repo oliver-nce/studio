@@ -1,6 +1,3 @@
-NCE Studio/studio/studio/hooks.py
-</path>
-```
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
@@ -18,7 +15,7 @@ app_publisher = "NCE Studio"
 app_description = "NCE Studio"
 app_email = "developer@example.com"
 app_license = "MIT"
-source_link = "https://github.com/oliver-nce/nce-studio"
+source_link = "https://github.com/oliver-nce/studio"
 app_icon = "octicon octicon-database"
 app_color = "#4F46E5"
 
@@ -66,17 +63,6 @@ app_logo_url = "/assets/studio/images/logo.png"
 
 # --------------------------------------------------------------------------
 #  Document Events
-#  Hook into lifecycle events for any DocType (even from other apps).
-#
-#  Format:
-#    doc_events = {
-#        "DocType Name": {
-#            "event_name": "dotted.path.to.handler",
-#        },
-#        "*": {  # all DocTypes
-#            "on_update": "studio.events.all_on_update",
-#        },
-#    }
 # --------------------------------------------------------------------------
 # doc_events = {}
 
@@ -84,37 +70,22 @@ app_logo_url = "/assets/studio/images/logo.png"
 #  Scheduler Events
 # --------------------------------------------------------------------------
 # scheduler_events = {
-#     "all": [
-#         "studio.tasks.all",
-#     ],
-#     "daily": [
-#         "studio.tasks.daily",
-#     ],
-#     "hourly": [
-#         "studio.tasks.hourly",
-#     ],
-#     "weekly": [
-#         "studio.tasks.weekly",
-#     ],
-#     "monthly": [
-#         "studio.tasks.monthly",
-#     ],
-#     "cron": {
-#         "0 9 * * 1": [  # Every Monday at 09:00
-#             "studio.tasks.monday_morning",
-#         ],
-#     },
+#     "all": ["studio.tasks.all"],
+#     "daily": ["studio.tasks.daily"],
+#     "hourly": ["studio.tasks.hourly"],
+#     "weekly": ["studio.tasks.weekly"],
+#     "monthly": ["studio.tasks.monthly"],
 # }
 
 # --------------------------------------------------------------------------
 #  Permissions
 # --------------------------------------------------------------------------
 # permission_query_conditions = {
-#     "NCE Doctype": "studio.permissions.get_nce_doctype_conditions",
+#     "Studio Doctype": "studio.permissions.get_conditions",
 # }
 #
 # has_permission = {
-#     "NCE Doctype": "studio.permissions.has_nce_doctype_permission",
+#     "Studio Doctype": "studio.permissions.has_permission",
 # }
 
 # --------------------------------------------------------------------------
@@ -132,58 +103,30 @@ app_logo_url = "/assets/studio/images/logo.png"
 # }
 
 # --------------------------------------------------------------------------
-#  Override Standard DocType Dashboard Data
-# --------------------------------------------------------------------------
-# override_doctype_dashboards = {
-#     "Task": "studio.overrides.get_dashboard_data",
-# }
-
-# --------------------------------------------------------------------------
-#  Fixtures — auto-export / import via bench
-#  Run: bench export-fixtures --app studio
+#  Fixtures
 # --------------------------------------------------------------------------
 # fixtures = [
 #     "Custom Field",
 #     "Property Setter",
-#     {
-#         "doctype": "Role",
-#         "filters": [["name", "in", ["My Custom Role"]]],
-#     },
 # ]
 
 # --------------------------------------------------------------------------
 #  Jinja Customization
 # --------------------------------------------------------------------------
 # jinja = {
-#     "methods": [
-#         "studio.utils.jinja.nce_method",
-#     ],
-#     "filters": [
-#         "studio.utils.jinja.nce_filter",
-#     ],
+#     "methods": ["studio.utils.jinja.studio_method"],
+#     "filters": ["studio.utils.jinja.studio_filter"],
 # }
 
 # --------------------------------------------------------------------------
-#  Boot Session — add data to the initial page load
+#  Boot Session
 # --------------------------------------------------------------------------
 # boot_session = "studio.startup.boot_session"
 
 # --------------------------------------------------------------------------
-#  Notification / Email
-# --------------------------------------------------------------------------
-# notification_config = "studio.notifications.get_notification_config"
-
-# --------------------------------------------------------------------------
 #  User Data Protection (GDPR)
 # --------------------------------------------------------------------------
-# user_data_fields = [
-#     {
-#         "doctype": "NCE Doctype",
-#         "filter_by": "owner",
-#         "redact_fields": ["email_address", "phone"],
-#         "partial": True,
-#     },
-# ]
+# user_data_fields = []
 
 # --------------------------------------------------------------------------
 #  Authentication and Authorization
@@ -191,11 +134,6 @@ app_logo_url = "/assets/studio/images/logo.png"
 # auth_hooks = [
 #     "studio.auth.validate",
 # ]
+```
 
-# --------------------------------------------------------------------------
-#  PDF / Print
-#  v16 uses wkhtmltopdf with stricter settings — avoid external resources.
-# --------------------------------------------------------------------------
-# pdf_header_html = "studio.utils.pdf.get_header_html"
-# pdf_body_html = "studio.utils.pdf.get_body_html"
-# pdf_footer_html = "studio.utils.pdf.get_footer_html"
+Now let me verify the file looks correct and commit + push:
