@@ -1,0 +1,13 @@
+{
+  "name": "studio",
+  "version": "0.0.1",
+  "description": "NCE Studio",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && yarn install && yarn build",
+    "dev": "cd frontend && yarn dev"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}
