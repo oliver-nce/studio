@@ -1,0 +1,396 @@
+{
+  "_meta": {
+    "description": "Machine-readable index of every module in the NCE Studio Frappe app. Read this file FIRST before exploring the codebase — it tells you exactly where to look for any given concern.",
+    "generated": "2026-03-25",
+    "usage": "Find the module whose 'purpose' matches your task, then read only that file and its 'depends_on' entries."
+  },
+
+  "architecture": {
+    "overview": "NCE Studio is a Frappe framework app with a Python backend (doctypes, whitelisted APIs) and a Vue 3 + Pinia frontend. The frontend never touches the database directly — all data flows through frappe.call() to 9 whitelisted endpoints.",
+    "data_flow": "Vue Component → Pinia Store → dataPipeline.ts (frappe.call) → nce_api.py re-export hub → lock_api / field_api / theme_api → Frappe ORM → MariaDB",
+    "key_patterns": [
+      "Backend uses is_system_manager() helper from utils.py — never inline role checks",
+      "Frontend uses safeEval.ts for condition evaluation — never new Function() or eval()",
+      "Edit locks use SELECT FOR UPDATE for atomicity",
+      "CSS values are validated server-side before injection",
+      "All whitelisted endpoints include permission checks"
+    ]
+  },
+
+  "backend": {
+    "studio/utils.py": {
+      "purpose": "Shared helpers: v15/v16 version detection, role checks, safe imports, route/query/permission utilities",
+      "exports": ["get_frappe_major_version", "is_v16_or_later", "is_v15", "is_system_manager", "try_import", "get_desk_route", "get_all_ordered", "check_permission", "get_app_version"],
+      "depends_on": [],
+      "sections": ["Version Detection", "Role Helpers", "Safe Optional-Module Imports", "Route Helpers", "Query Helpers", "Permission Helpers", "Formatting/Display Helpers"]
+    },
+    "studio/hooks.py": {
+      "purpose": "Central Frappe app configuration: metadata, assets, lifecycle hooks, scheduler events, permissions",
+      "exports": ["app_name", "app_version", "website_route_rules", "doc_events", "scheduler_events"],
+      "depends_on": [],
+      "sections": ["App Metadata", "Includes (CSS/JS)", "Website/Portal Config", "Install/Uninstall Hooks", "Document Events", "Scheduler Events", "Permissions", "DocType Overrides"]
+    },
+    "studio/install.py": {
+      "purpose": "Installation and uninstallation lifecycle hooks for app setup and teardown",
+      "exports": ["after_install", "before_uninstall", "after_uninstall"],
+      "depends_on": [],
+      "sections": ["Lifecycle Hooks", "Private Helpers (_create_default_roles, _create_default_settings, _cleanup_custom_fields)"]
+    },
+    "studio/www/studio.py": {
+      "purpose": "Serves the NCE Studio SPA and provides session context for dev mode",
+      "exports": ["get_context", "get_context_for_dev"],
+      "depends_on": [],
+      "sections": ["Production Context", "Development Context Endpoint"]
+    },
+    "studio/config/desktop.py": {
+      "purpose": "Desktop icon configuration for Frappe module page",
+      "exports": ["get_data"],
+      "depends_on": [],
+      "sections": ["Desktop Icon Definitions"]
+    },
+    "studio/config/docs.py": {
+      "purpose": "Documentation generation configuration for bench build-docs",
+      "exports": ["get_context"],
+      "depends_on": [],
+      "sections": ["Documentation Context"]
+    },
+
+    "studio/api/nce_api.py": {
+      "purpose": "Backward-compatible re-export hub — all 9 endpoints available at studio.api.nce_api.<func>",
+      "exports": ["acquire_edit_lock", "check_edit_lock", "refresh_edit_lock", "release_edit_lock", "get_random_doc_name", "resolve_fields", "save_resolved_fields", "get_theme_settings", "regenerate_theme_css"],
+      "depends_on": ["studio/api/lock_api.py", "studio/api/field_api.py", "studio/api/theme_api.py"],
+      "sections": ["Re-exports only"]
+    },
+    "studio/api/lock_api.py": {
+      "purpose": "Edit-lock endpoints: acquire, check, refresh, release with SELECT FOR UPDATE atomicity",
+      "exports": ["check_edit_lock", "acquire_edit_lock", "release_edit_lock", "refresh_edit_lock"],
+      "depends_on": ["studio/utils.py"],
+      "sections": ["check_edit_lock", "acquire_edit_lock (race-safe)", "release_edit_lock", "refresh_edit_lock"]
+    },
+    "studio/api/field_api.py": {
+      "purpose": "Field resolution (dot-notation link traversal) and document save with lock-token validation",
+      "exports": ["resolve_fields", "save_resolved_fields", "get_random_doc_name"],
+      "depends_on": [],
+      "sections": ["resolve_fields (nested path resolution)", "save_resolved_fields (transactional write)", "get_random_doc_name"]
+    },
+    "studio/api/theme_api.py": {
+      "purpose": "Theme settings retrieval and CSS regeneration endpoints",
+      "exports": ["get_theme_settings", "regenerate_theme_css"],
+      "depends_on": [],
+      "sections": ["get_theme_settings", "regenerate_theme_css"]
+    },
+
+    "studio/nce_studio/doctype/nce_edit_lock/nce_edit_lock.py": {
+      "purpose": "Document controller for edit locks: expiry validation, release, renewal",
+      "exports": ["NCEEditLock"],
+      "depends_on": ["studio/utils.py"],
+      "sections": ["Lifecycle Hooks (validate)", "Private Helpers (_validate_not_expired, _validate_locked_by)", "Public Methods (is_expired, release, renew)"]
+    },
+    "studio/nce_studio/doctype/nce_form_definition/nce_form_definition.py": {
+      "purpose": "Form schema definitions with live DocType field enrichment and JSON validation",
+      "exports": ["NCEFormDefinition"],
+      "depends_on": [],
+      "sections": ["Lifecycle Hooks (validate)", "Private Helpers (_validate_target_doctype, _validate_json_fields)", "Public Methods (get_resolved_schema)"]
+    },
+    "studio/nce_studio/doctype/nce_theme_settings/nce_theme_settings.py": {
+      "purpose": "Site-wide theme configuration with OKLCH colour math and CSS file generation",
+      "exports": ["NCEThemeSettings", "generate_shades"],
+      "depends_on": [],
+      "sections": ["OKLCH Colour Math", "CSS Generation Helpers", "Document Controller (validate, on_update, regenerate_theme_css, get_theme_variables)"]
+    },
+    "studio/nce_module/doctype/nce_doctype/nce_doctype.py": {
+      "purpose": "Example DocType controller with basic metadata retrieval endpoint",
+      "exports": ["NceDoctype", "get_summary"],
+      "depends_on": [],
+      "sections": ["Document Controller", "Whitelisted get_summary"]
+    },
+    "studio/nce_module/report/nce_report/nce_report.py": {
+      "purpose": "Query report for NCE Doctype with filtering, charting, and summary indicators",
+      "exports": ["execute", "get_columns", "get_data", "get_chart", "get_report_summary"],
+      "depends_on": [],
+      "sections": ["execute (entry point)", "Column Definitions", "Data Retrieval", "Chart Generation", "Report Summary"]
+    },
+    "studio/overrides/sample_override.py": {
+      "purpose": "Example DocType class override showing how to extend core Frappe doctypes (e.g. ToDo)",
+      "exports": ["CustomToDo"],
+      "depends_on": [],
+      "sections": ["Conditional Import", "Custom Subclass"]
+    }
+  },
+
+  "backend_tests": {
+    "studio/tests/test_utils.py": {
+      "purpose": "Shared test utilities, fixtures, and base test case class",
+      "exports": ["make_nce_doctype", "cleanup_test_records", "NceStudioTestCase"],
+      "depends_on": ["studio/utils.py"]
+    },
+    "studio/api/test_nce_api.py": {
+      "purpose": "Comprehensive unit tests for all 9 API endpoints with permission checks (30+ tests)",
+      "exports": ["TestNCEAPI"],
+      "depends_on": ["studio/api/nce_api.py", "studio/tests/test_utils.py"]
+    },
+    "studio/nce_studio/doctype/nce_edit_lock/test_nce_edit_lock.py": {
+      "purpose": "Unit tests for edit lock lifecycle: expiry, validate, release, renew (15+ tests)",
+      "exports": ["TestNCEEditLock"],
+      "depends_on": ["studio/tests/test_utils.py"]
+    },
+    "studio/nce_studio/doctype/nce_form_definition/test_nce_form_definition.py": {
+      "purpose": "Unit tests for form definition schema validation and resolution (20+ tests)",
+      "exports": ["TestNCEFormDefinition"],
+      "depends_on": ["studio/tests/test_utils.py"]
+    },
+    "studio/nce_module/doctype/nce_doctype/test_nce_doctype.py": {
+      "purpose": "Unit tests for NCE Doctype CRUD and permissions (10+ tests)",
+      "exports": ["TestNceDoctype"],
+      "depends_on": []
+    }
+  },
+
+  "frontend": {
+    "nce/types/index.ts": {
+      "purpose": "Central TypeScript interfaces: EditLock, ResolvedFields, FormDefinition, FieldMeta, ThemeSettings, PathFinder types",
+      "exports": ["EditLock", "ResolvedFields", "FieldValue", "SaveResult", "FormDefinition", "TabDefinition", "FieldMeta", "PathSegment", "FieldPath", "ThemeSettings", "ColorShade"],
+      "depends_on": [],
+      "sections": ["Edit Lock Interfaces", "Field Resolution Types", "Form Definition", "Field Metadata", "PathFinder Types", "Theme Types"]
+    },
+
+    "nce/utils/dataPipeline.ts": {
+      "purpose": "API gateway — wraps frappe.call() for all backend endpoints (field resolution, locks, theme)",
+      "exports": ["resolveFields", "saveResolvedFields", "checkEditLock", "acquireEditLock", "releaseEditLock", "getRandomDocName", "getFormDefinition", "regenerateThemeCss"],
+      "depends_on": ["nce/types/index.ts"],
+      "sections": ["Field Resolution", "Save Operations", "Lock Operations", "Form Definition Loading", "Theme Regeneration"]
+    },
+    "nce/utils/safeEval.ts": {
+      "purpose": "Safe expression evaluator using tokenization + recursive descent parser — replaces new Function()/eval()",
+      "exports": ["safeEvaluateCondition"],
+      "depends_on": [],
+      "sections": ["Tokenizer", "Precedence Rules", "Recursive Descent Parser", "Safety Guards"]
+    },
+    "nce/utils/schemaHelpers.ts": {
+      "purpose": "Schema transformation: tab mapping, visibility filtering, field resolution, component mapping, grid config",
+      "exports": ["mapFieldsToTabs", "filterVisibleTabs", "resolveFieldMapping", "evaluateCondition", "getFieldComponent", "buildGridConfig", "getFormFields"],
+      "depends_on": ["nce/types/index.ts", "nce/utils/safeEval.ts"],
+      "sections": ["Tab Mapping", "Visibility Filtering", "Field Mapping Resolution", "Condition Evaluation", "Component Mapping", "Grid Configuration", "Field Extraction"]
+    },
+    "nce/utils/formBinding.ts": {
+      "purpose": "PathFinder-to-form-field binding: validation, path helpers, field creation from paths",
+      "exports": ["validateFieldPath", "bindPathFinderToField", "createFieldFromPath", "getTerminalFieldName", "getParentPath", "isDirectField", "formatPathForDisplay", "isPathMapped", "findPathMatches", "addFieldBinding"],
+      "depends_on": ["nce/types/index.ts"],
+      "sections": ["Path Validation", "Field Binding", "Path Helpers", "Form Definition Mutations"]
+    },
+
+    "nce/composables/useFieldMeta.ts": {
+      "purpose": "Cached composable for fetching DocType field metadata — eliminates redundant API calls",
+      "exports": ["useFieldMeta", "FieldInfo"],
+      "depends_on": [],
+      "sections": ["Module-level Cache Maps", "fetchDoctypeFields", "findField", "resolveNestedFieldMeta", "invalidateCache"]
+    },
+    "nce/composables/useFormSchema.ts": {
+      "purpose": "Loads NCE Form Definition and target DocType field metadata with reactive state",
+      "exports": ["useFormSchema", "UseFormSchemaReturn"],
+      "depends_on": ["nce/types/index.ts"],
+      "sections": ["Ref State", "Computed Properties", "load() Async Function"]
+    },
+    "nce/composables/useSaveAction.ts": {
+      "purpose": "Shared save/submit logic with lock expiry checks and toast feedback",
+      "exports": ["useSaveAction"],
+      "depends_on": ["nce/stores/nceFormStore.ts"],
+      "sections": ["isLockExpired", "handleSave", "handleSubmit"]
+    },
+
+    "nce/stores/nceFormStore.ts": {
+      "purpose": "Central form state: loads schemas, manages field values, dirty tracking, validation, edit locking",
+      "exports": ["useNceFormStore"],
+      "depends_on": ["nce/types/index.ts", "nce/utils/dataPipeline.ts", "nce/utils/schemaHelpers.ts"],
+      "sections": ["State", "Computed Properties", "Internal Helpers", "Methods (loadForm, loadRecord, setFieldValue, getFieldValue, save, acquireLock, releaseLock, refreshLock, validate, reset, getFormData)"]
+    },
+    "nce/stores/nceEditLockStore.ts": {
+      "purpose": "Edit lock state management with auto-refresh intervals",
+      "exports": ["useNceEditLockStore"],
+      "depends_on": ["nce/types/index.ts", "nce/utils/dataPipeline.ts"],
+      "sections": ["State", "Methods (check, acquire, release, startAutoRefresh, stopAutoRefresh)"]
+    },
+    "nce/stores/componentPalette.ts": {
+      "purpose": "Available form components for the design palette with categorization and search",
+      "exports": ["useComponentPaletteStore", "PaletteComponent"],
+      "depends_on": [],
+      "sections": ["Component Definitions", "Grouped/Filtered Components", "Search State"]
+    },
+
+    "nce/pages/NceFormRuntime.vue": {
+      "purpose": "Main form runtime page: orchestrates schema loading, record selection, tab/grid layout, action bar",
+      "exports": ["NceFormRuntime"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/composables/useFormSchema.ts", "nce/utils/schemaHelpers.ts", "nce/components/FormElements/*"],
+      "sections": ["Template (loading, header, tab/flat layouts, action bar)", "Script (router integration, schema loading, visible tabs, grid config)"]
+    },
+
+    "nce/components/FormElements/NceFormField.vue": {
+      "purpose": "Renders a single field with the appropriate input component based on fieldtype",
+      "exports": ["NceFormField"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/composables/useFieldMeta.ts"]
+    },
+    "nce/components/FormElements/NceFormHeader.vue": {
+      "purpose": "Header bar: form title, record selector, lock badge, dirty badge",
+      "exports": ["NceFormHeader"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/components/FormElements/NceRecordSelector.vue", "nce/components/FormElements/NceLockBadge.vue", "nce/components/FormElements/NceDirtyBadge.vue"]
+    },
+    "nce/components/FormElements/NceFormGrid.vue": {
+      "purpose": "CSS Grid container rendering multiple form fields with configurable column spans",
+      "exports": ["NceFormGrid"],
+      "depends_on": ["nce/components/FormElements/NceFormField.vue"]
+    },
+    "nce/components/FormElements/NceFormActionBar.vue": {
+      "purpose": "Sticky action bar: Save, Submit, Discard, and custom API buttons",
+      "exports": ["NceFormActionBar"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/composables/useSaveAction.ts"]
+    },
+    "nce/components/FormElements/NceTabContainer.vue": {
+      "purpose": "Tab interface with visibility filtering based on form data conditions",
+      "exports": ["NceTabContainer"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/utils/schemaHelpers.ts"]
+    },
+    "nce/components/FormElements/NceCaption.vue": {
+      "purpose": "Semantic caption/heading that can resolve label from field metadata",
+      "exports": ["NceCaption"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/composables/useFieldMeta.ts"]
+    },
+    "nce/components/FormElements/NceActionButton.vue": {
+      "purpose": "Generic action button: save, submit, cancel, method call, navigation, or custom actions",
+      "exports": ["NceActionButton"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/composables/useSaveAction.ts"]
+    },
+    "nce/components/FormElements/NceLockBadge.vue": {
+      "purpose": "Badge displaying lock status (locked by, unlocked) with color variant",
+      "exports": ["NceLockBadge"],
+      "depends_on": ["nce/stores/nceFormStore.ts"]
+    },
+    "nce/components/FormElements/NceDirtyBadge.vue": {
+      "purpose": "Badge showing count of unsaved field changes",
+      "exports": ["NceDirtyBadge"],
+      "depends_on": ["nce/stores/nceFormStore.ts"]
+    },
+    "nce/components/FormElements/NceRecordSelector.vue": {
+      "purpose": "Autocomplete dropdown to select/load a record, plus random record button",
+      "exports": ["NceRecordSelector"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/utils/dataPipeline.ts"]
+    },
+    "nce/components/FormElements/NcePortalList.vue": {
+      "purpose": "Lightweight table for displaying and editing child table records",
+      "exports": ["NcePortalList"],
+      "depends_on": []
+    },
+
+    "nce/components/PathFinder/PathFinderCore.vue": {
+      "purpose": "Multi-column navigator for traversing linked DocType relationships to select field paths",
+      "exports": ["PathFinderCore"],
+      "depends_on": ["nce/composables/useFieldMeta.ts", "nce/components/PathFinder/PathColumn.vue"]
+    },
+    "nce/components/PathFinder/PathColumn.vue": {
+      "purpose": "Single column showing fields of a DocType with drill-down arrows for Link/Table fields",
+      "exports": ["PathColumn"],
+      "depends_on": ["nce/composables/useFieldMeta.ts"]
+    },
+    "nce/components/PathFinder/PathFinderPanel.vue": {
+      "purpose": "Root DocType selector with PathFinder integration and active form hint",
+      "exports": ["PathFinderPanel"],
+      "depends_on": ["nce/stores/nceFormStore.ts", "nce/components/PathFinder/PathFinderCore.vue"]
+    },
+    "nce/components/PathFinder/PathFinderDialog.vue": {
+      "purpose": "Dialog wrapper for PathFinder with tabs for Field Path and Button Action selection",
+      "exports": ["PathFinderDialog"],
+      "depends_on": ["nce/components/PathFinder/PathFinderCore.vue"]
+    },
+
+    "nce/components/palette/ComponentPalette.vue": {
+      "purpose": "Searchable palette of form components grouped by category for drag-and-drop",
+      "exports": ["ComponentPalette"],
+      "depends_on": ["nce/stores/componentPalette.ts", "nce/components/palette/PaletteGroup.vue"]
+    },
+    "nce/components/palette/PaletteGroup.vue": {
+      "purpose": "Collapsible group of components within the palette",
+      "exports": ["PaletteGroup"],
+      "depends_on": []
+    },
+
+    "nce/theme/colorShades.ts": {
+      "purpose": "OKLCH color space engine for perceptually uniform shade generation from hex colors",
+      "exports": ["hexToOklch", "oklchToHex", "generateShades", "gamutMap", "isDark", "getShade"],
+      "depends_on": ["nce/types/index.ts"],
+      "sections": ["Color Space Conversions", "Gamut Mapping", "Shade Generation", "Darkness Detection"]
+    },
+    "nce/theme/useThemeDefaults.ts": {
+      "purpose": "Theme state management with reactive color palette generation and DOM CSS variable injection",
+      "exports": ["THEME_DEFAULTS", "CSS_VARIABLE_MAPPING", "generateColorPalette", "applyToRoot", "useThemeState", "ThemeState"],
+      "depends_on": ["nce/types/index.ts", "nce/theme/colorShades.ts"],
+      "sections": ["Default Constants", "Shade Lightness Map", "CSS Variable Mapping", "Palette Generation", "Root Style Application", "Theme State Composable"]
+    },
+    "nce/theme/themeInit.ts": {
+      "purpose": "Theme initialization at app startup: loads persisted theme, fetches server settings, merges",
+      "exports": ["initializeTheme"],
+      "depends_on": ["nce/theme/themeInjector.ts", "nce/types/index.ts"]
+    },
+    "nce/theme/themeInjector.ts": {
+      "purpose": "Theme persistence (localStorage) and DOM injection of CSS custom properties",
+      "exports": ["loadPersistedTheme", "persistTheme", "injectTheme", "removeTheme"],
+      "depends_on": ["nce/theme/useThemeDefaults.ts", "nce/types/index.ts"]
+    },
+    "nce/theme/BrandColorPicker.vue": {
+      "purpose": "Color picker with OKLCH sliders and eye dropper support for brand color selection",
+      "exports": ["BrandColorPicker"],
+      "depends_on": []
+    },
+    "nce/theme/SwatchPicker.vue": {
+      "purpose": "Color swatch palette for selecting predefined colors",
+      "exports": ["SwatchPicker"],
+      "depends_on": []
+    },
+    "nce/theme/ThemePanel.vue": {
+      "purpose": "Theme configuration panel combining brand color and swatch pickers",
+      "exports": ["ThemePanel"],
+      "depends_on": ["nce/theme/BrandColorPicker.vue", "nce/theme/SwatchPicker.vue"]
+    },
+    "nce/theme/ThemeSettingsPage.vue": {
+      "purpose": "Full-page theme editor for all theme settings (colors, typography, layout)",
+      "exports": ["ThemeSettingsPage"],
+      "depends_on": []
+    },
+    "nce/theme/ThemePreviewPage.vue": {
+      "purpose": "Live preview of theme applied to various UI elements",
+      "exports": ["ThemePreviewPage"],
+      "depends_on": []
+    }
+  },
+
+  "frontend_tests": {
+    "nce/tests/setup.ts": {
+      "purpose": "Test environment setup with Frappe mocks and Vue test utilities"
+    },
+    "nce/tests/safeEval.test.ts": {
+      "purpose": "Tests for safe expression evaluator: operators, comparisons, nested expressions, security guards",
+      "depends_on": ["nce/utils/safeEval.ts"]
+    },
+    "nce/tests/colorShades.test.ts": {
+      "purpose": "Tests for OKLCH color math: hex conversion, shade generation, gamut mapping",
+      "depends_on": ["nce/theme/colorShades.ts"]
+    },
+    "nce/tests/useThemeDefaults.test.ts": {
+      "purpose": "Tests for theme defaults, palette generation, and CSS variable mapping",
+      "depends_on": ["nce/theme/useThemeDefaults.ts"]
+    },
+    "nce/tests/formBinding.test.ts": {
+      "purpose": "Tests for PathFinder-to-field binding: validation, path creation, duplicate detection",
+      "depends_on": ["nce/utils/formBinding.ts"]
+    },
+    "nce/tests/componentPalette.test.ts": {
+      "purpose": "Tests for palette store: component registration, search, categorization",
+      "depends_on": ["nce/stores/componentPalette.ts"]
+    }
+  },
+
+  "upstream_frappe_studio": {
+    "_note": "These files belong to the original Frappe Studio codebase (not NCE code). They contain new Function() patterns that are expected and out of scope for NCE security fixes.",
+    "stores/codeStore.ts": "Dynamic resource evaluation and expression context for Studio pages",
+    "utils/serializer.ts": "Object serialization with embedded function reconstruction",
+    "components/ObjectEditor.vue": "Generic key-value editor using serializer utilities"
+  }
+}
