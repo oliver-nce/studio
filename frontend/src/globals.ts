@@ -66,6 +66,15 @@ import AppHeader from "@/components/AppLayout/AppHeader.vue"
 import BottomTabs from "@/components/AppLayout/BottomTabs.vue"
 import MarkdownEditor from "@/components/AppLayout/MarkdownEditor.vue"
 
+// NCE form component previews (for canvas rendering — the real components
+// are imported locally in NceFormRuntime.vue and BlockTreeRenderer.vue)
+import NceFormFieldPreview from "@/nce/components/FormElements/previews/NceFormFieldPreview.vue"
+import NceFormGridPreview from "@/nce/components/FormElements/previews/NceFormGridPreview.vue"
+import NceTabContainerPreview from "@/nce/components/FormElements/previews/NceTabContainerPreview.vue"
+import NceFormActionBarPreview from "@/nce/components/FormElements/previews/NceFormActionBarPreview.vue"
+import NceCaptionPreview from "@/nce/components/FormElements/previews/NceCaptionPreview.vue"
+import NceActionButtonPreview from "@/nce/components/FormElements/previews/NceActionButtonPreview.vue"
+
 export function registerGlobalComponents(app: App) {
 	app.component("Alert", Alert)
 	app.component("Autocomplete", Autocomplete)
@@ -133,4 +142,12 @@ export function registerGlobalComponents(app: App) {
 	app.component("AppHeader", AppHeader)
 	app.component("BottomTabs", BottomTabs)
 	app.component("MarkdownEditor", MarkdownEditor)
+
+	// NCE form components (preview versions for canvas/designer)
+	app.component("NceFormField", NceFormFieldPreview)
+	app.component("NceFormGrid", NceFormGridPreview)
+	app.component("NceTabContainer", NceTabContainerPreview)
+	app.component("NceFormActionBar", NceFormActionBarPreview)
+	app.component("NceCaption", NceCaptionPreview)
+	app.component("NceActionButton", NceActionButtonPreview)
 }

@@ -12,10 +12,11 @@ import { spritePlugin } from "frappe-ui/icons";
 import { registerGlobalComponents } from "./globals";
 
 import { COMPONENTS } from "@/data/components";
+import { NCE_COMPONENTS } from "@/nce/data/nceComponents";
 import Block from "@/utils/block";
 import "@/utils/appUtilsRenderer";
 
-Block.setComponents(COMPONENTS);
+Block.setComponents({ ...COMPONENTS, ...NCE_COMPONENTS });
 
 const studio = createApp(App);
 const pinia = createPinia();
