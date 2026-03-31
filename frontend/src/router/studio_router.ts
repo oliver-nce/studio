@@ -33,11 +33,11 @@ const routes = [
     component: () => import("@nce/pages/NceFormRuntime.vue"),
     props: true,
   },
-  // NCE Form Designer Route
+  // NCE Form Designer Route (canvas-based)
   {
     path: "/form-designer/:formName",
     name: "NceFormDesigner",
-    component: () => import("@nce/pages/NceFormDesigner.vue"),
+    component: () => import("@nce/pages/NceFormDesignerCanvas.vue"),
     props: true,
   },
   // NCE Theme Routes
