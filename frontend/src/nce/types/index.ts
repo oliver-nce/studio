@@ -35,8 +35,7 @@ export interface FormDefinition {
   grid_layout: Record<string, any>
   grid_config: Record<string, any>
   tab_layout: TabDefinition[]
-  submission_action: "Save" | "Submit" | "Workflow" | "Custom API"
-  custom_api_endpoint?: string
+
   on_load_script?: string
   on_submit_script?: string
   validation_rules?: Record<string, any>

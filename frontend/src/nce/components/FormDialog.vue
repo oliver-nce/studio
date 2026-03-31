@@ -78,26 +78,6 @@
 					</div>
 				</div>
 
-				<FormControl
-					label="Submission Action"
-					type="select"
-					variant="outline"
-					v-model="activeForm.submission_action"
-					:options="[
-						{ label: 'Save', value: 'Save' },
-						{ label: 'Submit', value: 'Submit' },
-						{ label: 'Workflow', value: 'Workflow' },
-						{ label: 'Custom API', value: 'Custom API' },
-					]"
-				/>
-				<FormControl
-					v-if="activeForm.submission_action === 'Custom API'"
-					label="Custom API Endpoint"
-					type="text"
-					variant="outline"
-					v-model="activeForm.custom_api_endpoint"
-					placeholder="myapp.api.submit_form"
-				/>
 			</div>
 		</template>
 
@@ -127,8 +107,6 @@ interface FormDef {
 	name: string
 	form_title: string
 	target_doctype: string
-	submission_action: string
-	custom_api_endpoint: string
 }
 
 const props = defineProps<{ form?: FormDef | null }>()
@@ -138,8 +116,6 @@ const emptyFormState: FormDef = {
 	name: "",
 	form_title: "",
 	target_doctype: "",
-	submission_action: "Save",
-	custom_api_endpoint: "",
 }
 
 const activeForm = ref<FormDef>({ ...emptyFormState })
@@ -159,8 +135,6 @@ watch(
 				name: props.form.name,
 				form_title: props.form.form_title,
 				target_doctype: props.form.target_doctype,
-				submission_action: props.form.submission_action || "Save",
-				custom_api_endpoint: props.form.custom_api_endpoint || "",
 			}
 		} else {
 			activeForm.value = { ...emptyFormState }
@@ -273,8 +247,6 @@ function createForm() {
 		{
 			form_title: activeForm.value.form_title,
 			target_doctype: activeForm.value.target_doctype,
-			submission_action: activeForm.value.submission_action,
-			custom_api_endpoint: activeForm.value.custom_api_endpoint || undefined,
 		},
 		{
 			onSuccess(res: any) {
@@ -298,8 +270,6 @@ function updateForm() {
 			name: activeForm.value.name,
 			form_title: activeForm.value.form_title,
 			target_doctype: activeForm.value.target_doctype,
-			submission_action: activeForm.value.submission_action,
-			custom_api_endpoint: activeForm.value.custom_api_endpoint || "",
 		},
 		{
 			onSuccess(data: any) {

@@ -8,7 +8,6 @@ const studioForms = createListResource({
 		"form_title",
 		"target_doctype",
 		"studio_page",
-		"submission_action",
 		"creation",
 		"modified",
 	],

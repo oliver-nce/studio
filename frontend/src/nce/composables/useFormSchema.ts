@@ -8,7 +8,6 @@ export interface UseFormSchemaReturn {
 	tabs: Ref<TabDefinition[]>;
 	hasTabs: Ref<boolean>;
 	targetDoctype: Ref<string>;
-	submissionAction: Ref<string>;
 	isLoaded: Ref<boolean>;
 	load: (formName: string) => Promise<void>;
 }
@@ -21,9 +20,6 @@ export function useFormSchema(): UseFormSchemaReturn {
 
 	const hasTabs = computed(() => tabs.value.length > 0);
 	const targetDoctype = computed(() => schema.value?.target_doctype ?? "");
-	const submissionAction = computed(
-		() => schema.value?.submission_action ?? "Save",
-	);
 
 	async function load(formName: string): Promise<void> {
 		isLoaded.value = false;
@@ -61,7 +57,6 @@ export function useFormSchema(): UseFormSchemaReturn {
 		tabs,
 		hasTabs,
 		targetDoctype,
-		submissionAction,
 		isLoaded,
 		load,
 	};

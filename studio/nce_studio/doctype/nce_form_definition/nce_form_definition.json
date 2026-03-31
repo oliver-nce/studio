@@ -35,23 +35,6 @@
     },
     { "fieldname": "tab_layout", "fieldtype": "JSON", "label": "Tab Layout" },
     {
-      "fieldname": "section_submission",
-      "fieldtype": "Section Break",
-      "label": "Submission"
-    },
-    {
-      "fieldname": "submission_action",
-      "fieldtype": "Select",
-      "label": "Submission Action",
-      "options": "Save\nSubmit\nWorkflow\nCustom API",
-      "default": "Save"
-    },
-    {
-      "fieldname": "custom_api_endpoint",
-      "fieldtype": "Data",
-      "label": "Custom API Endpoint"
-    },
-    {
       "fieldname": "section_scripts",
       "fieldtype": "Section Break",
       "label": "Scripts"

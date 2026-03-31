@@ -203,7 +203,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const matches = findPathMatches(formDef, "customer")
@@ -223,7 +222,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const matches = findPathMatches(formDef, "customer")
@@ -243,7 +241,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const matches = findPathMatches(formDef, "customer")
@@ -263,7 +260,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const result = addFieldBinding(formDef, "customer.name", "Customer Name", "Data")
@@ -284,7 +280,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const result = addFieldBinding(formDef, "customer.name", "Customer Name", "Data")
@@ -306,7 +301,6 @@ describe("formBinding - Path Mapping", () => {
         grid_layout: {},
         grid_config: {},
         tab_layout: [],
-        submission_action: "Save",
       }
 
       const result = addFieldBinding(formDef, "new.field", "New Field", "Data")

@@ -57,7 +57,7 @@
 			</div>
 
 			<!-- Action bar: Save / Submit / Discard -->
-			<NceFormActionBar :submissionAction="nceFormStore.formDefinition?.submission_action || 'Save'" />
+			<NceFormActionBar />
 		</template>
 	</div>
 </template>
