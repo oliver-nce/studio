@@ -64,6 +64,11 @@
 								<Dropdown
 									:options="[
 										{
+											label: 'Design',
+											onClick: () => router.push({ name: 'NceFormDesigner', params: { formName: form.name } }),
+											icon: 'layout',
+										},
+										{
 											label: 'Edit',
 											onClick: () => {
 												activeForm = form
@@ -123,8 +128,10 @@ import session from "@/utils/session"
 import { watchDebounced } from "@vueuse/core"
 import FormDialog from "@nce/components/FormDialog.vue"
 import { toast } from "vue-sonner"
+import { useRouter } from "vue-router"
 
 const searchFilter = ref("")
+const router = useRouter()
 
 const fetchForms = () => {
 	const filters = {} as any
