@@ -42,6 +42,7 @@ app_logo_url = "/assets/studio/images/logo.png"
 
 # NCE form runtime route (portal)
 website_route_rules = [
+    {"from_route": "/studio/<path:studio_path>", "to_route": "studio"},
     {"from_route": "/nce-form/<path:form_path>", "to_route": "nce_form"},
 ]
 
