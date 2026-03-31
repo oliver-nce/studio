@@ -1,0 +1,2 @@
+import{e as s,f as a,aN as d,cO as c,cP as i}from"./block-Bk1QJG1b.js";const p=s({__name:"InsertVideo",props:{editor:{}},setup(e,{expose:n}){n();const o=e;function r(){o.editor.chain().focus().selectAndUploadVideo().run()}const t={props:o,selectAndUploadVideo:r};return Object.defineProperty(t,"__isScriptSetup",{enumerable:!1,value:!0}),t}});function _(e,n,o,r,t,l){return d(e.$slots,"default",c(i({onClick:r.selectAndUploadVideo})))}const f=a(p,[["render",_],["__file","InsertVideo.vue"]]);export{f as default};
+//# sourceMappingURL=InsertVideo-DgZtOp8w.js.map
