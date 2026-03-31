@@ -1,33 +1,105 @@
 <template>
-	<div class="flex h-screen flex-col bg-gray-100">
-		<!-- Toolbar -->
+	<div class="studio isolate h-screen flex-col overflow-hidden bg-gray-100">
+		<ComponentContextMenu ref="componentContextMenu"></ComponentContextMenu>
 		<NceDesignerToolbar
+			class="relative z-30"
 			:formDefinition="formDefinition"
 			:isSaving="isSaving"
 			@save="saveLayout"
 			@preview="openPreview"
 		/>
-
-		<!-- Main area -->
-		<div class="flex flex-1 overflow-hidden">
-			<!-- Left panel: NCE component palette -->
-			<NceDesignerLeftPanel />
-
-			<!-- Canvas (reuses Studio's StudioCanvas as-is) -->
-			<StudioCanvas
-				v-if="rootBlock"
-				ref="pageCanvas"
-				class="canvas-container flex-1 overflow-hidden bg-gray-200 p-10"
-				:componentTree="rootBlock"
-				:canvasStyles="{ minHeight: '600px' }"
+		<div class="flex flex-col">
+			<StudioLeftPanel
+				class="absolute bottom-0 left-0 top-[var(--toolbar-height)] z-20 overflow-auto bg-white"
 			/>
-			<div v-else class="flex flex-1 items-center justify-center">
+
+			<StudioCanvas
+				v-show="!canvasStore.showFragmentCanvas || !canvasStore.fragmentData.block"
+				ref="pageCanvas"
+				v-if="rootBlock"
+				class="canvas-container absolute bottom-0 top-[var(--toolbar-height)] flex justify-center overflow-hidden bg-gray-200 p-10"
+				:componentTree="rootBlock"
+				:canvas-styles="{
+					minHeight: '1000px',
+				}"
+				:style="{
+					left: `${store.studioLayout.showLeftPanel ? store.studioLayout.leftPanelWidth : 0}px`,
+					right: `${store.studioLayout.showRightPanel ? store.studioLayout.rightPanelWidth : 0}px`,
+				}"
+			/>
+
+			<div
+				v-if="!rootBlock"
+				class="absolute bottom-0 top-[var(--toolbar-height)] flex items-center justify-center"
+				:style="{
+					left: `${store.studioLayout.showLeftPanel ? store.studioLayout.leftPanelWidth : 0}px`,
+					right: `${store.studioLayout.showRightPanel ? store.studioLayout.rightPanelWidth : 0}px`,
+				}"
+			>
 				<LoadingIndicator class="h-8 w-8" />
 			</div>
 
-			<!-- Right panel: Properties (includes PathFinder for NCE fields) -->
-			<NceDesignerRightPanel />
+			<StudioRightPanel
+				class="no-scrollbar dark:bg-zinc-900 absolute bottom-0 right-0 top-[var(--toolbar-height)] z-20 overflow-auto border-l-[1px] bg-white shadow-lg dark:border-gray-800"
+			/>
 		</div>
+
+		<Dialog
+			v-model="canvasStore.showHTMLDialog"
+			class="overscroll-none"
+			:options="{
+				title: `Edit HTML - ${canvasStore.editableBlock?.componentName}`,
+				size: '7xl',
+			}"
+		>
+			<template #body-content>
+				<Code
+					:modelValue="canvasStore.editableBlock?.getHTML()"
+					language="html"
+					label="Edit HTML"
+					:showLineNumbers="true"
+					:showSaveButton="true"
+					@save="
+						(val: string) => {
+							canvasStore.editableBlock?.setHTML(val)
+							canvasStore.closeHTMLDialog()
+						}
+					"
+					height="500px"
+					max-height="500px"
+					required
+				/>
+			</template>
+		</Dialog>
+
+		<Dialog
+			v-model="canvasStore.showCodeDialog"
+			class="overscroll-none"
+			:options="{
+				title: `Edit ${canvasStore.editableBlock?.componentName} prop - ${canvasStore.editableCode.propName}`,
+				size: '7xl',
+			}"
+		>
+			<template #body-content>
+				<Code
+					:modelValue="canvasStore.editableCode.code"
+					language="javascript"
+					label="Edit Code"
+					:showLineNumbers="true"
+					:showSaveButton="true"
+					@save="
+						(val: string) => {
+							canvasStore.editableBlock?.setProp(canvasStore.editableCode.propName, val)
+							canvasStore.showCodeDialog = false
+						}
+					"
+					:emitOnChange="true"
+					height="500px"
+					max-height="500px"
+					required
+				/>
+			</template>
+		</Dialog>
 	</div>
 </template>
 
@@ -35,26 +107,37 @@
 /**
  * NCE Form Designer — Canvas-based form layout editor.
  *
- * Reuses Frappe Studio's StudioCanvas for drag-drop block editing,
- * but scoped to NCE form components only (via the dedicated left panel).
+ * Uses the REAL Frappe Studio layout components (StudioLeftPanel, StudioRightPanel,
+ * StudioCanvas) with the same absolute-positioned layout as StudioPage.vue.
  *
- * The right panel reuses Studio's ComponentProperties, which already has
- * built-in PathFinder integration for NCE components (any component whose
- * name starts with "Nce" and has props in NCE_PATH_PROPS gets PathFinder
- * buttons automatically).
+ * The only custom component is NceDesignerToolbar, which replaces StudioToolbar
+ * with form-specific actions (Save Layout, Preview, Back) while visually matching
+ * the Studio toolbar style.
+ *
+ * StudioLeftPanel provides: component palette, layers, PathFinder tabs.
+ * StudioRightPanel provides: ComponentProperties (with built-in NCE PathFinder
+ * integration), Styles, Events tabs.
+ * StudioCanvas provides: the drag-drop block editor.
  *
  * On "Save Layout", the block tree is serialised to JSON and stored in
  * NCE Form Definition.form_schema. A flat field_mapping is also extracted
  * for backward compatibility with the existing NceFormRuntime.
  */
-import { ref, watchEffect, onMounted, onUnmounted, nextTick } from "vue"
+import { ref, watchEffect, onMounted, onUnmounted, nextTick, toRef } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { LoadingIndicator } from "frappe-ui"
+import { LoadingIndicator, Dialog } from "frappe-ui"
 import { call } from "frappe-ui"
 import { toast } from "vue-sonner"
 
+import ComponentContextMenu from "@/components/ComponentContextMenu.vue"
+import StudioLeftPanel from "@/components/StudioLeftPanel.vue"
+import StudioRightPanel from "@/components/StudioRightPanel.vue"
 import StudioCanvas from "@/components/StudioCanvas.vue"
+import Code from "@/components/Code.vue"
+
+import useStudioStore from "@/stores/studioStore"
 import useCanvasStore from "@/stores/canvasStore"
+import { useStudioEvents } from "@/utils/useStudioEvents"
 import { useNceFormStore } from "@nce/stores"
 import {
 	getBlockInstance,
@@ -66,16 +149,21 @@ import type { FormDefinition } from "@nce/types"
 import type Block from "@/utils/block"
 
 import NceDesignerToolbar from "@nce/components/designer/NceDesignerToolbar.vue"
-import NceDesignerLeftPanel from "@nce/components/designer/NceDesignerLeftPanel.vue"
-import NceDesignerRightPanel from "@nce/components/designer/NceDesignerRightPanel.vue"
 
 // ---------------------------------------------------------------------------
 // Route & stores
 // ---------------------------------------------------------------------------
 const route = useRoute()
 const router = useRouter()
+const store = useStudioStore()
 const canvasStore = useCanvasStore()
 const nceFormStore = useNceFormStore()
+
+// Wire component context menu to studioStore (same as StudioPage.vue)
+const componentContextMenu = toRef(store, "componentContextMenu")
+
+// Wire up Studio keyboard events (Delete/Backspace, Ctrl+C/V/D, etc.)
+useStudioEvents()
 
 // ---------------------------------------------------------------------------
 // State
@@ -88,14 +176,17 @@ const isSaving = ref(false)
 const formName = ref(route.params.formName as string)
 
 // ---------------------------------------------------------------------------
-// Canvas ↔ canvasStore wiring
+// Canvas ↔ canvasStore wiring (same pattern as StudioPage.vue)
 // ---------------------------------------------------------------------------
-// StudioCanvas does NOT set canvasStore.activeCanvas itself — the parent
-// page must do it (same pattern as StudioPage.vue lines 183-198).
 watchEffect(() => {
 	if (pageCanvas.value) {
 		canvasStore.activeCanvas = pageCanvas.value
 	}
+})
+
+// Set editing mode to "page" so the right panel shows the correct tabs
+onMounted(() => {
+	canvasStore.editingMode = "page"
 })
 
 // ---------------------------------------------------------------------------
@@ -224,7 +315,6 @@ function extractFieldMapping(block: any): Record<string, string> {
 
 	function walk(b: any) {
 		if (b.componentName === "NceFormField") {
-			// Block instances expose getProp(); serialised objects have componentProps
 			const fp = typeof b.getProp === "function"
 				? b.getProp("fieldPath")
 				: b.componentProps?.fieldPath
@@ -247,9 +337,8 @@ function extractFieldMapping(block: any): Record<string, string> {
 }
 </script>
 
-<style scoped>
-.canvas-container {
-	/* Match Studio's canvas positioning */
-	position: relative;
+<style>
+.studio {
+	--toolbar-height: 3.5rem;
 }
 </style>
