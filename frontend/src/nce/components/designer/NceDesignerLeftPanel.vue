@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCanvasStore } from "@/stores/canvasStore"
+import useCanvasStore from "@/stores/canvasStore"
 import { NCE_COMPONENTS } from "@/nce/data/nceComponents"
 
 const canvasStore = useCanvasStore()

@@ -54,7 +54,7 @@ import { call } from "frappe-ui"
 import { toast } from "vue-sonner"
 
 import StudioCanvas from "@/components/StudioCanvas.vue"
-import { useCanvasStore } from "@/stores/canvasStore"
+import useCanvasStore from "@/stores/canvasStore"
 import { useNceFormStore } from "@nce/stores"
 import {
 	getBlockInstance,

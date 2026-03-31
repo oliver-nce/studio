@@ -25,7 +25,7 @@
 import { computed } from "vue"
 import { FeatherIcon } from "frappe-ui"
 import ComponentProperties from "@/components/ComponentProperties.vue"
-import { useCanvasStore } from "@/stores/canvasStore"
+import useCanvasStore from "@/stores/canvasStore"
 
 const canvasStore = useCanvasStore()
 
