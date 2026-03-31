@@ -24,7 +24,7 @@
 					:required="true"
 					placeholder="e.g. Player Registration"
 				/>
-				<div class="relative" @click.outside="closePanel">
+				<div class="relative">
 					<label class="mb-1.5 block text-xs text-gray-600">Target DocType</label>
 					<div class="relative">
 						<input
@@ -48,7 +48,7 @@
 					<!-- DocType Picker Panel -->
 					<div
 						ref="panelRef"
-						v-if="_panelOpen.value && doctypeOptions.length > 0"
+						v-if="_panelOpen && doctypeOptions.length > 0"
 						class="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
 					>
 						<div class="border-b border-gray-200 p-2">
