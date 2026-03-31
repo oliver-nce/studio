@@ -1,2 +1,0 @@
-import{e as s,f as i,aN as a,cO as p,cP as c}from"./block-Bk1QJG1b.js";const _=s({__name:"InsertLink",props:{editor:{}},setup(e,{expose:t}){t();const n=e;function r(){n.editor.commands.openLinkEditor()}const o={props:n,openLinkEditor:r};return Object.defineProperty(o,"__isScriptSetup",{enumerable:!1,value:!0}),o}});function d(e,t,n,r,o,u){return a(e.$slots,"default",p(c({onClick:r.openLinkEditor})))}const l=i(_,[["render",d],["__file","InsertLink.vue"]]);export{l as default};
-//# sourceMappingURL=InsertLink-BK4z7QTB.js.map
