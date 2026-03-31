@@ -14,7 +14,7 @@
 			/>
 
 			<StudioCanvas
-				v-show="!canvasStore.showFragmentCanvas || !canvasStore.fragmentData.block"
+				v-show="canvasStore.editingMode === 'page'"
 				ref="pageCanvas"
 				v-if="rootBlock"
 				class="canvas-container absolute bottom-0 top-[var(--toolbar-height)] flex justify-center overflow-hidden bg-gray-200 p-10"
@@ -184,8 +184,15 @@ watchEffect(() => {
 	}
 })
 
-// Set editing mode to "page" so the right panel shows the correct tabs
+// Reset Studio store state that may be stale from a previous page visit.
+// - settingPage: if true, StudioCanvas blocks selectBlock() and shows a
+//   loading overlay — must be false for canvas interaction to work.
+// - leftPanelActiveTab: force "Add Component" so the component palette shows
+//   (not a stale "Pages" tab from a previous Studio app visit).
+// - editingMode: "page" so right panel shows Properties/Styles/Events tabs.
 onMounted(() => {
+	store.settingPage = false
+	store.studioLayout.leftPanelActiveTab = "Add Component"
 	canvasStore.editingMode = "page"
 })
 
