@@ -11,12 +11,19 @@ import { resourcesPlugin, frappeRequest } from "frappe-ui";
 import { spritePlugin } from "frappe-ui/icons";
 import { registerGlobalComponents } from "./globals";
 
-import { COMPONENTS } from "@/data/components";
+import components, { COMPONENTS } from "@/data/components";
 import { NCE_COMPONENTS } from "@/nce/data/nceComponents";
 import Block from "@/utils/block";
 import "@/utils/appUtilsRenderer";
 
+// Register all components (standard + NCE) in the Block system
 Block.setComponents({ ...COMPONENTS, ...NCE_COMPONENTS });
+
+// Also push NCE components into the ComponentPanel's list so they
+// appear in the "Standard" tab of the Add Component palette.
+// (components.list is a static array computed at module load from
+//  COMPONENTS only — NCE components must be added after the fact.)
+components.list.push(...Object.values(NCE_COMPONENTS));
 
 const studio = createApp(App);
 const pinia = createPinia();

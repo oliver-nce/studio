@@ -122,6 +122,8 @@ const pendingValue = ref("")
 // --- Field Path tab state ---
 function handlePathSelected(path: string) {
 	pendingValue.value = path
+	// Immediately confirm field path selection (no extra Insert click needed)
+	emit("update:modelValue", path)
 }
 
 // --- Button Action tab state ---
